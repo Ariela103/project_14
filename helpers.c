@@ -15,6 +15,9 @@ char *trimFromLeft(char *s)
         s++;
     return s;
 }
+
+
+/*
 char *decToHex(int num)
 {
     int i = num, size = 0;
@@ -25,6 +28,23 @@ char *decToHex(int num)
     sprintf(hex, "%05x", num);
     return hex;
 }
+*/
+char *decToOctal(int num) {
+    int i = num, size = 0;
+    char *octal;
+    
+    for (size = 0; i > 0; i = i / 8)
+        size++;
+    
+    octal = (char *)calloc(size + 1, sizeof(char));
+    sprintf(octal, "%0*o", size, num);
+    
+    return octal;
+}
+
+
+
+
 char *numToBin(int num)
 {
     int i = 0;
@@ -110,6 +130,7 @@ char *numToBin(int num)
     strcat(word, "\0");
     return word;
 }
+/*
 HexWord *convertBinaryWordToHex(BinaryWord *word)
 {
     int i = 0;
@@ -147,6 +168,46 @@ HexWord *convertBinaryWordToHex(BinaryWord *word)
 
     return newHex;
 }
+*/
+
+OctalWord *convertBinaryWordToOctal(BinaryWord *word) {
+    int i = 0;
+    char octalDigits[3] = {0};
+    OctalWord *newOctal = (OctalWord *)malloc(sizeof(OctalWord));
+    for (i = BINARY_WORD_SIZE - 1; i >= 0; i--) {
+        octalDigits[i % 3] = word->digit[i].on ? '1' : '0';
+        if (i % 3 == 0) {
+            switch (i) {
+            case 15:
+                newOctal->_E = binaryStringToOctalNumber(octalDigits);
+                break;
+            case 12:
+                newOctal->_D = binaryStringToOctalNumber(octalDigits);
+                break;
+            case 9:
+                newOctal->_C = binaryStringToOctalNumber(octalDigits);
+                break;
+            case 6:
+                newOctal->_B = binaryStringToOctalNumber(octalDigits);
+                break;
+            case 3:
+                newOctal->_A = binaryStringToOctalNumber(octalDigits);
+                break;
+            case 0:
+                newOctal->_F = binaryStringToOctalNumber(octalDigits);
+                break;
+            default:
+                break;
+            }
+
+            memset(octalDigits, 0, 3);
+        }
+    }
+
+    return newOctal;
+}
+
+/*
 unsigned binaryStringToHexNumber(char binaryStr[4])
 {
 
@@ -185,3 +246,26 @@ unsigned binaryStringToHexNumber(char binaryStr[4])
 
     return 0;
 }
+*/
+unsigned binaryStringToOctalNumber(char binaryStr[3]) {
+    if (!strcmp(binaryStr, "000"))
+        return 0;
+    if (!strcmp(binaryStr, "001"))
+        return 1;
+    if (!strcmp(binaryStr, "010"))
+        return 2;
+    if (!strcmp(binaryStr, "011"))
+        return 3;
+    if (!strcmp(binaryStr, "100"))
+        return 4;
+    if (!strcmp(binaryStr, "101"))
+        return 5;
+    if (!strcmp(binaryStr, "110"))
+        return 6;
+    if (!strcmp(binaryStr, "111"))
+        return 7;
+
+    return 0;
+}
+
+
