@@ -49,6 +49,14 @@ Bool writeStringInstruction(char *s);
    The function returns true.
 */
 
+
+void writeFirstWord(const Operation *op);
+/* @ Function: writeFirstWord
+   @ Arguments: The function gets const Operation *op- the operation it writes uts first word.
+   @ Description: The function writes in the memory the first word of the operation and its parameter by writing the opcode of the operation into the memory.
+    The function doesn't return value.
+*/
+
 void writeSecondWord(char *first, char *second, AddrMethodsOptions active[2], const Operation *op);
 /* @ Function: writeSecondWord
    @ Arguments: The function gets char *first and char *second - the first and second operands of the operation- const Operation *op.
@@ -57,12 +65,7 @@ void writeSecondWord(char *first, char *second, AddrMethodsOptions active[2], co
     The function doesn't return value.
 */
 
-void writeFirstWord(const Operation *op);
-/* @ Function: writeFirstWord
-   @ Arguments: The function gets const Operation *op- the operation it writes uts first word.
-   @ Description: The function writes in the memory the first word of the operation and its parameter by writing the opcode of the operation into the memory.
-    The function doesn't return value.
-*/
+
 
 void writeDirectOperandWord(char *labelName);
 /* @ Function: writeDirectOperandWord
@@ -86,16 +89,16 @@ Bool detectOperandType(char *operand, AddrMethodsOptions active[2], int type);
     Returns true if the operation is valid, and false if it isn't.
 */
 
-char *parseLabelNameFromIndexAddrOperand(char *s);
-/* @ Function: parseLabelNameFromIndexAddrOperand
-   @ Arguments: The function gets char *s, which is the operand from index addressing method it parses.
+char *parseLabelNameFromIndirectAddrOperand(char *s);
+/* @ Function: parseLabelNameFromIndirectAddrOperand
+   @ Arguments: The function gets char *s, which is the operand from Indirect addressing method it parses.
    @ Description: The function parses out the label name from the char *s it gets.
    Returns the label name from the token it got.
 */
 
-int parseRegNumberFromIndexAddrOperand(char *s);
-/* @ Function: parseRegNumberFromIndexAddrOperand
-   @ Arguments: The function gets char *s, which is the operand from index addressing method it parses.
+int parseRegNumberFromIndirectAddrOperand(char *s);
+/* @ Function: parseRegNumberFromIndirectAddrOperand
+   @ Arguments: The function gets char *s, which is the operand from Indirect addressing method it parses.
    @ Description: The function parses out the register's number from the char *s it gets.
    Returns the register's number from the token it got.
 */

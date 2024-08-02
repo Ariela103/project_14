@@ -19,7 +19,7 @@ typedef struct
     unsigned int _C : 4;
     unsigned int _D : 4;
     unsigned int _E : 4;
-} HexWord;
+} OctalWord;
 
 /*AddrMethodsOptions is a struct for addressing mehod, each member represent operand addressing method
 and the value can be 0 or 1 and the meaning is to  tell us if the addressing method is legal/optional
@@ -29,7 +29,7 @@ typedef struct
 {
     unsigned int immediate : 1;
     unsigned int direct : 1;
-    unsigned int index : 1;
+    unsigned int indirect : 1;
     unsigned int reg : 1;
 } AddrMethodsOptions;
 
@@ -37,7 +37,6 @@ typedef struct
 typedef struct
 {
     unsigned int op;        /*op- is the binary value of the first sixteen bits in the first word for each operation*/
-    unsigned int funct : 4; /*the function code of the operation*/
     char keyword[4];        /*the keyword for the operation name*/
     AddrMethodsOptions src; /*legal addressing mehods for the source operand*/
     AddrMethodsOptions des; /*legal addressing mehods for the destination operand*/

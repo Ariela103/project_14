@@ -33,5 +33,5 @@ char *trimFromLeft(char *s);
 
 char *decToHex(int num);
 char *numToBin(int num);
-HexWord *convertBinaryWordToHex(BinaryWord *word);
-unsigned binaryStringToHexNumber(char binaryStr[4]);
+OctalWord *convertBinaryWordToOctal(BinaryWord *word);
+unsigned binaryStringToOctalNumber(char binaryStr[3]);
