@@ -26,19 +26,19 @@ Bool handleOperation(char *operationName, char *args)
             second = 0;
     }
     areOperandsLegal = parseOperands(first, second, p, active) && areOperandsLegal;
-
+/* GUY */
     if (areOperandsLegal)
     {
-        int size = 2;
+        int size = 1;  /* is this refer to how many words we need?*/
         if (active[0].immediate || active[1].immediate)
             size++;
-        if ((active[0].direct || active[0].index) || (active[1].direct || active[1].index))
+        if ((active[0].direct || active[0].indirect) || (active[1].direct || active[1].indirect))
             size += 2;
-        if (!p->funct && (!active[0].direct && !active[0].immediate && !active[0].index && !active[0].reg) && (!active[1].direct && !active[1].immediate && !active[1].index && !active[1].reg))
+        if (!p->funct && (!active[0].direct && !active[0].immediate && !active[0].indirect && !active[0].reg) && (!active[1].direct && !active[1].immediate && !active[1].indirect && !active[1].reg))
             size = 1;
 
-        active[0].direct = active[0].immediate = active[0].index = active[0].reg = 0;
-        active[1].direct = active[1].immediate = active[1].index = active[1].reg = 0;
+        active[0].direct = active[0].immediate = active[0].indirect = active[0].reg = 0;
+        active[1].direct = active[1].immediate = active[1].indirect = active[1].reg = 0;
         increaseInstructionCounter(size);
     }
 
@@ -46,7 +46,7 @@ Bool handleOperation(char *operationName, char *args)
 }
 Bool parseOperands(char *src, char *des, const Operation *op, AddrMethodsOptions active[2])
 {
-
+/* GUY*/
     int expectedOperandsCount = 0;
     int operandsPassedCount = 0;
     Bool isValid = True;
@@ -54,9 +54,9 @@ Bool parseOperands(char *src, char *des, const Operation *op, AddrMethodsOptions
         operandsPassedCount++;
     if (des)
         operandsPassedCount++;
-    if (op->src.direct || op->src.immediate || op->src.index || op->src.reg)
+    if (op->src.direct || op->src.immediate || op->src.indirect || op->src.reg)
         expectedOperandsCount++;
-    if (op->des.direct || op->des.immediate || op->des.index || op->des.reg)
+    if (op->des.direct || op->des.immediate || op->des.indirect || op->des.reg)
         expectedOperandsCount++;
 
     if (expectedOperandsCount == 1 && operandsPassedCount == 1)
@@ -71,46 +71,48 @@ Bool parseOperands(char *src, char *des, const Operation *op, AddrMethodsOptions
     if (operandsPassedCount > expectedOperandsCount)
         isValid = yieldError(extraOperandsPassed);
 
-    if ((op->src.direct || op->src.immediate || op->src.reg || op->src.index) && (op->des.direct || op->des.immediate || op->des.reg || op->des.index))
+    if ((op->src.direct || op->src.immediate || op->src.reg || op->src.indirect) && (op->des.direct || op->des.immediate || op->des.reg || op->des.indirect))
     {
 
         if (!src)
-            isValid = yieldError(requiredSourceOperandIsMissin);
+            isValid = yieldError(requiredSourceOperandIsMissing);
 
         else
             isValid = validateOperandMatch(op->src, active, src, 0) && isValid;
 
         if (!des)
-            isValid = yieldError(requiredDestinationOperandIsMissin);
+            isValid = yieldError(requiredDestinationOperandIsMissing);
         else
             isValid = validateOperandMatch(op->des, active, des, 1) && isValid;
     }
-    else if (op->src.direct || op->src.immediate || op->src.reg || op->src.index)
+    else if (op->src.direct || op->src.immediate || op->src.reg || op->src.indirect)
     {
         if (!src)
-            return yieldError(requiredSourceOperandIsMissin);
+            return yieldError(requiredSourceOperandIsMissing);
         else
             return validateOperandMatch(op->src, active, src, 0) && isValid;
     }
-    else if (op->des.direct || op->des.immediate || op->des.reg || op->des.index)
+    else if (op->des.direct || op->des.immediate || op->des.reg || op->des.indirect)
     {
         if (!des)
-            return yieldError(requiredDestinationOperandIsMissin);
+            return yieldError(requiredDestinationOperandIsMissing);
         else
             return validateOperandMatch(op->des, active, des, 1) && isValid;
     }
 
     return isValid;
 }
+
+/*GUY*/
 Bool validateOperandMatch(AddrMethodsOptions allowedAddrs, AddrMethodsOptions active[2], char *operand, int type)
 {
     Bool isAny = isValidImmediateParamter(operand) || isValidIndexParameter(operand) || isRegistery(operand) || verifyLabelNaming(operand) || isIndexParameter(operand);
     Bool isImmediate = isValidImmediateParamter(operand);
-    Bool isDirectIndex = !isImmediate && isValidIndexParameter(operand);
-    Bool isReg = !isDirectIndex && !isImmediate && isRegistery(operand);
-    Bool isDirect = !isReg && !isDirectIndex && !isImmediate && verifyLabelNaming(operand);
+    Bool isIndirect = !isImmediate && isValidIndexParameter(operand);
+    Bool isReg = !isIndirect && !isImmediate && isRegistery(operand);
+    Bool isDirect = !isReg && !isIndirect && !isImmediate && verifyLabelNaming(operand);
 
-    if (isIndexParameter(operand) && !isDirectIndex)
+    if (isIndexParameter(operand) && !isIndirect)
         return yieldError(registeryIndexOperandTypeIfOutOfAllowedRegisteriesRange);
 
     if (!isAny)
@@ -122,13 +124,13 @@ Bool validateOperandMatch(AddrMethodsOptions allowedAddrs, AddrMethodsOptions ac
         return type == 1 ? yieldError(desOperandTypeIsNotAllowed) : yieldError(srcOperandTypeIsNotAllowed);
     else if (!allowedAddrs.direct && isDirect)
         return type == 1 ? yieldError(desOperandTypeIsNotAllowed) : yieldError(srcOperandTypeIsNotAllowed);
-    else if (!allowedAddrs.index && isDirectIndex)
+    else if (!allowedAddrs.indire && isIndirect)
         return type == 1 ? yieldError(desOperandTypeIsNotAllowed) : yieldError(srcOperandTypeIsNotAllowed);
 
     active[type].direct = isDirect;
     active[type].reg = isReg;
     active[type].immediate = isImmediate;
-    active[type].index = isDirectIndex;
+    active[type].indirect = isIndirect; /*GUY*/
 
     return True;
 }
