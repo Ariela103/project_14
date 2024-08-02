@@ -1,15 +1,15 @@
 #include "data.h"
 
 static BinaryWord *binaryImg = NULL;
-static HexWord *hexImg = NULL;
+static OctalWord *OctalImg = NULL;
 unsigned static IC = MEMORY_START;
 unsigned static DC = 0;
 unsigned static ICF = 0;
 unsigned static DCF = 0;
 
-extern HexWord *convertBinaryWordToHex(BinaryWord *word);
+extern OctalWord *convertBinaryWordToOctal(BinaryWord *word);
 extern char *numToBin(int num);
-extern unsigned binaryStringToHexNumber(char binaryStr[4]);
+extern unsigned binaryStringToOctalNumber(char binaryStr[3]);
 
 unsigned getDC() { return DC; }
 unsigned getIC() { return IC; }
@@ -30,18 +30,18 @@ void allocMemoryImg()
 
     if (binaryImg != NULL)
         free(binaryImg);
-    if (hexImg != NULL)
-        free(hexImg);
+    if (OctalImg != NULL)
+        free(OctalImg);
 
     binaryImg = (BinaryWord *)malloc(totalSize * sizeof(BinaryWord));
-    hexImg = (HexWord *)malloc(totalSize * sizeof(HexWord));
+    OctalImg = (OctalWord *)malloc(totalSize * sizeof(OctalWord));
     for (i = 0; i < totalSize; i++)
     {
-        hexImg[i]._A = 0;
-        hexImg[i]._B = 0;
-        hexImg[i]._C = 0;
-        hexImg[i]._D = 0;
-        hexImg[i]._E = 0;
+        OctalImg[i]._A = 0;
+        OctalImg[i]._B = 0;
+        OctalImg[i]._C = 0;
+        OctalImg[i]._D = 0;
+        OctalImg[i]._E = 0;
 
         for (j = 0; j < BINARY_WORD_SIZE; j++)
         {
@@ -116,27 +116,27 @@ void calcFinalAddrsCountersValues()
 void printMemoryImgInRequiredObjFileFormat()
 {
     extern BinaryWord *binaryImg;
-    extern HexWord *hexImg;
+    extern OctalWord *OctalImg;
     int i;
     int totalSize = DCF - MEMORY_START;
     printf("%d %d\n", ICF - MEMORY_START, DCF - ICF);
     for (i = 0; i < totalSize; i++)
     {
-        hexImg[i] = *convertBinaryWordToHex(&binaryImg[i]);
-        printf("%04d A%x-B%x-C%x-D%x-E%x\n", MEMORY_START + i, hexImg[i]._A, hexImg[i]._B, hexImg[i]._C, hexImg[i]._D, hexImg[i]._E);
+        OctalImg[i] = *convertBinaryWordToOctal(&binaryImg[i]);
+        printf("%04d A%x-B%x-C%x-D%x-E%x\n", MEMORY_START + i, OctalImg[i]._A, OctalImg[i]._B, OctalImg[i]._C, OctalImg[i]._D, OctalImg[i]._E);
     }
 }
 
 void writeMemoryImageToObFile(FILE *fp)
 {
     extern BinaryWord *binaryImg;
-    extern HexWord *hexImg;
+    extern OctalWord *OctalImg;
     int i;
     int totalSize = DCF - MEMORY_START;
     fprintf(fp, "%d %d\n", ICF - MEMORY_START, DCF - ICF);
     for (i = 0; i < totalSize; i++)
     {
-        hexImg[i] = *convertBinaryWordToHex(&binaryImg[i]);
-        fprintf(fp, "%04d A%x-B%x-C%x-D%x-E%x\n", MEMORY_START + i, hexImg[i]._A, hexImg[i]._B, hexImg[i]._C, hexImg[i]._D, hexImg[i]._E);
+        OctalImg[i] = *convertBinaryWordToOctal(&binaryImg[i]);
+        fprintf(fp, "%04d A%x-B%x-C%x-D%x-E%x\n", MEMORY_START + i, OctalImg[i]._A, OctalImg[i]._B, OctalImg[i]._C, OctalImg[i]._D, OctalImg[i]._E);
     }
 }
