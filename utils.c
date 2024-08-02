@@ -1,7 +1,6 @@
 #include "data.h"
 
-const char *regs[REGS_SIZE] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7", "r8", "r9", "r10",
-                               "r11", "r12", "r13", "r14", "r15"};
+const char *regs[REGS_SIZE] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"};
 Bool isMacroOpening(char *s)
 {
     return !strcmp(s, "macro") ? True : False;
@@ -9,7 +8,7 @@ Bool isMacroOpening(char *s)
 
 Bool isMacroClosing(char *s)
 {
-    return !strcmp(s, "endm") ? True : False;
+    return !strcmp(s, "endmacr") ? True : False;
 }
 Bool isPossiblyUseOfMacro(char *s)
 {
@@ -46,7 +45,7 @@ Bool isRegistery(char *s)
 {
     int len = strlen(s);
     int i = 0;
-    if (s[0] == 'r' && len >= 2)
+    if (s[0] == 'r' && len == 2)
     {
         while (i < REGS_SIZE)
         {
@@ -67,7 +66,10 @@ Bool isValidImmediateParamter(char *s)
             return False;
     return True;
 }
-Bool isIndexParameter(char *s)
+
+/*GUY*/
+
+/*Bool isIndexParameter(char *s)
 {
     int len = strlen(s);
     char *opening = 0, *closing = 0;
@@ -88,7 +90,16 @@ Bool isIndexParameter(char *s)
     }
     return result;
 }
+*/
 
+Bool isIndirectParameter(char *s)
+{
+  int len = strlen(s);
+    return (len == 3 && s[0] == '*' && s[1] == 'r')
+}
+    
+
+/*
 Bool isValidIndexParameter(char *s)
 {
     int len = strlen(s);
@@ -112,6 +123,16 @@ Bool isValidIndexParameter(char *s)
         s[len - 1] = ']';
     }
     return result;
+}
+*/
+Bool isValidIndirectParameter(char *s){
+
+    if (isIndirectParameter(*s) ==true){
+        if (s[2] >= '0' || s[2] < '8')
+            return true;
+    }
+    return false;
+   
 }
 
 Bool isComment(char *s)
