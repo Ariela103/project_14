@@ -174,32 +174,37 @@ OctalWord *convertBinaryWordToOctal(BinaryWord *word) {
     int i = 0;
     char octalDigits[3] = {0};
     OctalWord *newOctal = (OctalWord *)malloc(sizeof(OctalWord));
+
     for (i = BINARY_WORD_SIZE - 1; i >= 0; i--) {
         octalDigits[i % 3] = word->digit[i].on ? '1' : '0';
+        
+        /* Once we've filled 3 binary digits, convert them to octal*/
         if (i % 3 == 0) {
-            switch (i) {
-            case 15:
-                newOctal->_E = binaryStringToOctalNumber(octalDigits);
-                break;
-            case 12:
-                newOctal->_D = binaryStringToOctalNumber(octalDigits);
-                break;
-            case 9:
-                newOctal->_C = binaryStringToOctalNumber(octalDigits);
-                break;
-            case 6:
-                newOctal->_B = binaryStringToOctalNumber(octalDigits);
-                break;
-            case 3:
-                newOctal->_A = binaryStringToOctalNumber(octalDigits);
-                break;
-            case 0:
-                newOctal->_F = binaryStringToOctalNumber(octalDigits);
-                break;
-            default:
-                break;
+            /* Calculate the octal number from the 3 binary digits */
+            char octalValue = binaryStringToOctalNumber(octalDigits);
+
+            /* Determine which field of newOctal to store the octal value */
+            switch (i / 3) {
+                case 4:
+                    newOctal->_A = octalValue;
+                    break;
+                case 3:
+                    newOctal->_B = octalValue;
+                    break;
+                case 2:
+                    newOctal->_C = octalValue;
+                    break;
+                case 1:
+                    newOctal->_D = octalValue;
+                    break;
+                case 0:
+                    newOctal->_E = octalValue;
+                    break;
+                default:
+                    break;
             }
 
+            /* Reset the octalDigits array */
             memset(octalDigits, 0, 3);
         }
     }
@@ -207,7 +212,28 @@ OctalWord *convertBinaryWordToOctal(BinaryWord *word) {
     return newOctal;
 }
 
-/*
+unsigned binaryStringToOctalNumber(char binaryStr[3]) {
+
+    if (!strcmp(binaryStr, "000"))
+        return 0;
+    if (!strcmp(binaryStr, "001"))
+        return 1;
+    if (!strcmp(binaryStr, "010"))
+        return 2;
+    if (!strcmp(binaryStr, "011"))
+        return 3;
+    if (!strcmp(binaryStr, "100"))
+        return 4;
+    if (!strcmp(binaryStr, "101"))
+        return 5;
+    if (!strcmp(binaryStr, "110"))
+        return 6;
+    if (!strcmp(binaryStr, "111"))
+        return 7;
+
+    return 0;
+}
+
 unsigned binaryStringToHexNumber(char binaryStr[4])
 {
 
@@ -246,26 +272,4 @@ unsigned binaryStringToHexNumber(char binaryStr[4])
 
     return 0;
 }
-*/
-unsigned binaryStringToOctalNumber(char binaryStr[3]) {
-    if (!strcmp(binaryStr, "000"))
-        return 0;
-    if (!strcmp(binaryStr, "001"))
-        return 1;
-    if (!strcmp(binaryStr, "010"))
-        return 2;
-    if (!strcmp(binaryStr, "011"))
-        return 3;
-    if (!strcmp(binaryStr, "100"))
-        return 4;
-    if (!strcmp(binaryStr, "101"))
-        return 5;
-    if (!strcmp(binaryStr, "110"))
-        return 6;
-    if (!strcmp(binaryStr, "111"))
-        return 7;
-
-    return 0;
-}
-
 

@@ -34,7 +34,7 @@ Bool handleOperation(char *operationName, char *args)
             size++;
         if ((active[0].direct || active[0].indirect) || (active[1].direct || active[1].indirect))
             size += 2;
-        if (!p->funct && (!active[0].direct && !active[0].immediate && !active[0].indirect && !active[0].reg) && (!active[1].direct && !active[1].immediate && !active[1].indirect && !active[1].reg))
+        if ((!active[0].direct && !active[0].immediate && !active[0].indirect && !active[0].reg) && (!active[1].direct && !active[1].immediate && !active[1].indirect && !active[1].reg))
             size = 1;
 
         active[0].direct = active[0].immediate = active[0].indirect = active[0].reg = 0;
@@ -75,27 +75,27 @@ Bool parseOperands(char *src, char *des, const Operation *op, AddrMethodsOptions
     {
 
         if (!src)
-            isValid = yieldError(requiredSourceOperandIsMissing);
+            isValid = yieldError(requiredSourceOperandIsMissin);
 
         else
             isValid = validateOperandMatch(op->src, active, src, 0) && isValid;
 
         if (!des)
-            isValid = yieldError(requiredDestinationOperandIsMissing);
+            isValid = yieldError(requiredDestinationOperandIsMissin);
         else
             isValid = validateOperandMatch(op->des, active, des, 1) && isValid;
     }
     else if (op->src.direct || op->src.immediate || op->src.reg || op->src.indirect)
     {
         if (!src)
-            return yieldError(requiredSourceOperandIsMissing);
+            return yieldError(requiredSourceOperandIsMissin);
         else
             return validateOperandMatch(op->src, active, src, 0) && isValid;
     }
     else if (op->des.direct || op->des.immediate || op->des.reg || op->des.indirect)
     {
         if (!des)
-            return yieldError(requiredDestinationOperandIsMissing);
+            return yieldError(requiredDestinationOperandIsMissin);
         else
             return validateOperandMatch(op->des, active, des, 1) && isValid;
     }
@@ -124,7 +124,7 @@ Bool validateOperandMatch(AddrMethodsOptions allowedAddrs, AddrMethodsOptions ac
         return type == 1 ? yieldError(desOperandTypeIsNotAllowed) : yieldError(srcOperandTypeIsNotAllowed);
     else if (!allowedAddrs.direct && isDirect)
         return type == 1 ? yieldError(desOperandTypeIsNotAllowed) : yieldError(srcOperandTypeIsNotAllowed);
-    else if (!allowedAddrs.indire && isIndirect)
+    else if (!allowedAddrs.indirect && isIndirect)
         return type == 1 ? yieldError(desOperandTypeIsNotAllowed) : yieldError(srcOperandTypeIsNotAllowed);
 
     active[type].direct = isDirect;

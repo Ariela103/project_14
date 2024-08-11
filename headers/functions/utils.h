@@ -147,3 +147,5 @@ Bool verifyLabelNamingAndPrintErrors(char *s);
    @ Description: The function makes sure the name of the label is valid, by checking things like its length, if it is equal to an operation...
    If it finds an error it yields (prints) it and returns false, else returns true.
 */
+
+Bool isValidImmediateParamter(char *s);

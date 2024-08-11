@@ -89,7 +89,7 @@ Bool detectOperandType(char *operand, AddrMethodsOptions active[2], int type);
     Returns true if the operation is valid, and false if it isn't.
 */
 
-char *parseLabelNameFromIndirectAddrOperand(char *s);
+int parseLabelNameFromIndirectAddrOperand(char *s);
 /* @ Function: parseLabelNameFromIndirectAddrOperand
    @ Arguments: The function gets char *s, which is the operand from Indirect addressing method it parses.
    @ Description: The function parses out the label name from the char *s it gets.

@@ -56,6 +56,7 @@ Bool isRegistery(char *s)
     }
     return False;
 }
+
 Bool isValidImmediateParamter(char *s)
 {
     int i, len = strlen(s);
@@ -69,7 +70,7 @@ Bool isValidImmediateParamter(char *s)
 
 /*GUY*/
 
-/*Bool isIndexParameter(char *s)
+Bool isIndexParameter(char *s)
 {
     int len = strlen(s);
     char *opening = 0, *closing = 0;
@@ -90,16 +91,16 @@ Bool isValidImmediateParamter(char *s)
     }
     return result;
 }
-*/
+
 
 Bool isIndirectParameter(char *s)
 {
   int len = strlen(s);
-    return (len == 3 && s[0] == '*' && s[1] == 'r')
+  return (len == 3 && s[0] == '*' && s[1] == 'r');
 }
     
 
-/*
+
 Bool isValidIndexParameter(char *s)
 {
     int len = strlen(s);
@@ -124,15 +125,15 @@ Bool isValidIndexParameter(char *s)
     }
     return result;
 }
-*/
+
+
 Bool isValidIndirectParameter(char *s){
 
-    if (isIndirectParameter(*s) ==true){
+    if (isIndirectParameter(s) == True){
         if (s[2] >= '0' || s[2] < '8')
-            return true;
+            return True;
     }
-    return false;
-   
+    return False;
 }
 
 Bool isComment(char *s)

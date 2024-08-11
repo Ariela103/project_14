@@ -1,6 +1,7 @@
 #include "data.h"
 
 void writeAdditionalOperandsWords(const Operation *op, AddrMethodsOptions active, char *value);
+
 Bool writeOperationBinary(char *operationName, char *args)
 {
     const Operation *op = getOperationByName(operationName);
@@ -23,7 +24,7 @@ Bool writeOperationBinary(char *operationName, char *args)
         writeSecondWord(first, second, active, op);
         writeAdditionalOperandsWords(op, active[1], second);
     }
-    else if (!first && !second && !op->funct)
+    else if (!first && !second )
         return True;
 
     else
@@ -35,9 +36,9 @@ Bool writeOperationBinary(char *operationName, char *args)
 void writeAdditionalOperandsWords(const Operation *op, AddrMethodsOptions active, char *value)
 {
 
-    if (active.index)
+    if (active.indirect)
     {
-        parseLabelNameFromIndexAddrOperand(value);
+        /*parseLabelNameFromIndirectAddrOperand(value);*/
         writeDirectOperandWord(value);
     }
     else if (active.direct)
@@ -73,16 +74,17 @@ Bool writeStringInstruction(char *s)
 
 void writeSecondWord(char *first, char *second, AddrMethodsOptions active[2], const Operation *op)
 {
-    unsigned secondWord = (A << 16) | (op->funct << 12);
-    if (first && (active[0].reg || active[0].index))
-        secondWord = secondWord | (active[0].reg ? (getRegisteryNumber(first) << 8) : (parseRegNumberFromIndexAddrOperand(first) << 8)) | (active[0].reg ? (REGISTER_DIRECT_ADDR << 6) : (INDEX_ADDR << 6));
+    unsigned secondWord = (A << 16);
+    /*
+    if (first && (active[0].reg || active[0].indirect))
+        secondWord = secondWord | (active[0].reg ? (getRegisteryNumber(first) << 8) : (parseLabelNameFromIndexAddrOperand(first) << 8)) | (active[0].reg ? (REGISTER_DIRECT_ADDR << 6) : (INDEX_ADDR << 6));
     else if (first && (active[0].direct || active[0].immediate))
         secondWord = secondWord | (0 << 8) | (active[0].direct ? (DIRECT_ADDR << 6) : (IMMEDIATE_ADDR << 6));
-    if (second && (active[1].reg || active[1].index))
-        secondWord = secondWord | (active[1].reg ? (getRegisteryNumber(second) << 2) : (parseRegNumberFromIndexAddrOperand(second) << 2)) | (active[1].reg ? (REGISTER_DIRECT_ADDR) : (INDEX_ADDR));
+    if (second && (active[1].reg || active[1].indirect))
+        secondWord = secondWord | (active[1].reg ? (getRegisteryNumber(second) << 2) : (parseLabelNameFromIndexAddrOperand(second) << 2)) | (active[1].reg ? (REGISTER_DIRECT_ADDR) : (INDEX_ADDR));
     else if (second && (active[1].direct || active[1].immediate))
         secondWord = secondWord | (0 << 2) | (active[1].direct ? (DIRECT_ADDR) : (IMMEDIATE_ADDR));
-
+    */
     addWord(secondWord, Code);
 }
 
@@ -128,7 +130,7 @@ Bool detectOperandType(char *operand, AddrMethodsOptions active[2], int type)
     else if (isValidImmediateParamter(operand))
         active[type].immediate = 1;
     else if (isValidIndexParameter(operand))
-        active[type].index = 1;
+        active[type].indirect = 1;
     else
     {
 
@@ -164,5 +166,11 @@ int parseRegNumberFromIndexAddrOperand(char *s)
     if (p)
         *p = 0;
 
+    return getRegisteryNumber(s);
+}
+
+ int parseRegNumberFromIndirectAddrOperand(char *s){
+    s = strchr(s,'r');
+    s++;
     return getRegisteryNumber(s);
 }
