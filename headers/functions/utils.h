@@ -18,7 +18,7 @@ with parsing the assembly code.
 Bool isMacroOpening(char *s);
 /* @ Function: isMacroOpening
    @ Arguments: The function gets a char *s, the string it checks whether it is the opening of a macro or not.
-   @ Description: The function checks if char *s is equal to "macro", returns true if it is, and false if it isn't
+   @ Description: The function checks if char *s is equal to "macr", returns true if it is, and false if it isn't
 */
 
 Bool isMacroClosing(char *s);
