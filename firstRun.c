@@ -26,16 +26,22 @@ Bool handleOperation(char *operationName, char *args)
             second = 0;
     }
     areOperandsLegal = parseOperands(first, second, p, active) && areOperandsLegal;
-/* GUY */
+    /* GUY */
     if (areOperandsLegal)
     {
-        int size = 1;  /* is this refer to how many words we need?*/
-        if (active[0].immediate || active[1].immediate)
-            size++;
-        if ((active[0].direct || active[0].indirect) || (active[1].direct || active[1].indirect))
-            size += 2;
+        int size = 1; /* is this refer to how many words we need?*/
+
         if ((!active[0].direct && !active[0].immediate && !active[0].indirect && !active[0].reg) && (!active[1].direct && !active[1].immediate && !active[1].indirect && !active[1].reg))
             size = 1;
+        else if ((active[0].reg || active[0].indirect) && (active[1].reg || active[1].indirect))
+            size = 2;
+        else
+        {
+            if (first && second)
+                size = 3;
+            else
+                size = 2;
+        }
 
         active[0].direct = active[0].immediate = active[0].indirect = active[0].reg = 0;
         active[1].direct = active[1].immediate = active[1].indirect = active[1].reg = 0;
@@ -46,7 +52,7 @@ Bool handleOperation(char *operationName, char *args)
 }
 Bool parseOperands(char *src, char *des, const Operation *op, AddrMethodsOptions active[2])
 {
-/* GUY*/
+    /* GUY*/
     int expectedOperandsCount = 0;
     int operandsPassedCount = 0;
     Bool isValid = True;
@@ -106,14 +112,12 @@ Bool parseOperands(char *src, char *des, const Operation *op, AddrMethodsOptions
 /*GUY*/
 Bool validateOperandMatch(AddrMethodsOptions allowedAddrs, AddrMethodsOptions active[2], char *operand, int type)
 {
-    Bool isAny = isValidImmediateParamter(operand) || isValidIndexParameter(operand) || isRegistery(operand) || verifyLabelNaming(operand) || isIndexParameter(operand);
+    Bool isAny = isValidImmediateParamter(operand) || isValidIndirectParameter(operand) || isRegistery(operand) || verifyLabelNaming(operand);
+
     Bool isImmediate = isValidImmediateParamter(operand);
-    Bool isIndirect = !isImmediate && isValidIndexParameter(operand);
+    Bool isIndirect = !isImmediate && isValidIndirectParameter(operand);
     Bool isReg = !isIndirect && !isImmediate && isRegistery(operand);
     Bool isDirect = !isReg && !isIndirect && !isImmediate && verifyLabelNaming(operand);
-
-    if (isIndexParameter(operand) && !isIndirect)
-        return yieldError(registeryIndexOperandTypeIfOutOfAllowedRegisteriesRange);
 
     if (!isAny)
         return type == 1 ? yieldError(illegalInputPassedAsOperandDesOperand) : yieldError(illegalInputPassedAsOperandSrcOperand);

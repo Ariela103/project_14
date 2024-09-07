@@ -8,32 +8,41 @@ Bool writeOperationBinary(char *operationName, char *args)
     char *first, *second;
     AddrMethodsOptions active[2] = {{0, 0, 0, 0}, {0, 0, 0, 0}};
     Bool isValid = True;
+    printf("operationName:%s\n", operationName);
     first = strtok(args, ", \t\n\f\r");
     second = strtok(NULL, ", \t\n\f\r");
-    isValid = detectOperandType(first, active, 0) && detectOperandType(second, active, 1);
-    writeFirstWord(op, active);
+    /*if (strcmp(first, ".extern"))
+        return True;*/
 
-    if (first && second && isValid)
+    if (first && second)
     {
 
+        /*
+         00144
+         000 000 001 100 100
+         */
+        isValid = detectOperandType(first, active, 0) && detectOperandType(second, active, 1);
+        writeFirstWord(op, active);
         writeSecondWord(first, second, active, op);
+        /*
         writeAdditionalOperandsWords(op, active[0], first);
         writeAdditionalOperandsWords(op, active[1], second);
+        */
     }
 
-    else if (!second && first && isValid)
+    else if (!second && first)
     {
         second = first;
-        writeSecondWord(first, second, active, op);
-        writeAdditionalOperandsWords(op, active[1], second);
+        isValid = detectOperandType(second, active, 1);
+        writeFirstWord(op, active);
+        writeSecondWord(NULL, second, active, op);
+
+        /*writeAdditionalOperandsWords(op, active[1], second);*/
     }
     else if (!first && !second)
-        return True;
+        writeFirstWord(op, active);
 
-    else
-        return False;
-
-    return True;
+    return isValid;
 }
 
 void writeAdditionalOperandsWords(const Operation *op, AddrMethodsOptions active, char *value)
@@ -56,7 +65,7 @@ Bool writeDataInstruction(char *token)
     while (token != NULL)
     {
         num = atoi(token);
-        addWord((A << 16) | num, Data);
+        addWord(num, Data);
         token = strtok(NULL, ", \t\n\f\r");
     }
     return True;
@@ -68,97 +77,117 @@ Bool writeStringInstruction(char *s)
     int i, len;
     start++;
     len = strlen(start);
-    for (i = 0; i < len - 2; i++)
-        addWord((A << 16) | start[i], Data);
 
-    addWord((A << 16) | '\0', Data);
+    /*printf("string to add:%s length:%d\n", start, len);*/
+
+    for (i = 0; i < len - 1; i++)
+        addWord(start[i], Data);
+
+    addWord('\0', Data);
     return True;
 }
 
 void writeSecondWord(char *first, char *second, AddrMethodsOptions active[2], const Operation *op)
 {
-    unsigned secondWord = (A << 16);
+    unsigned secondWord = 0;
+    /* second word contains two registeries operands*/
+    if ((active[0].reg && active[1].reg) || (active[0].reg && active[1].indirect) || (active[0].indirect && active[1].reg) || (active[0].indirect && active[1].indirect))
+        addWord((parseRegNumberFromOperand(first) << 6) | (parseRegNumberFromOperand(second) << 3) | A, Code);
+    else
+    {
+        /* first operand */
+        printf("first:%s second:%s\n", first, second);
+        if (first)
+        {
+            if (active[0].reg || active[0].indirect)
+                addWord((parseRegNumberFromOperand(first) << 6) | A, Code);
+            else if (active[0].direct)
+                writeDirectOperandWord(first);
+            else if (active[0].immediate)
+                writeImmediateOperandWord(first);
+        }
+
+        if (second)
+        {
+            if (active[1].reg || active[1].indirect)
+                addWord(((parseRegNumberFromOperand(second) << 3) | A), Code);
+            else if (active[1].direct)
+                writeDirectOperandWord(second);
+            else if (active[1].immediate)
+                writeImmediateOperandWord(second);
+        }
+    }
+
     /*
-    if (first && (active[0].reg || active[0].indirect))
-        secondWord = secondWord | (active[0].reg ? (getRegisteryNumber(first) << 8) : (parseLabelNameFromIndexAddrOperand(first) << 8)) | (active[0].reg ? (REGISTER_DIRECT_ADDR << 6) : (INDEX_ADDR << 6));
-    else if (first && (active[0].direct || active[0].immediate))
-        secondWord = secondWord | (0 << 8) | (active[0].direct ? (DIRECT_ADDR << 6) : (IMMEDIATE_ADDR << 6));
-    if (second && (active[1].reg || active[1].indirect))
-        secondWord = secondWord | (active[1].reg ? (getRegisteryNumber(second) << 2) : (parseLabelNameFromIndexAddrOperand(second) << 2)) | (active[1].reg ? (REGISTER_DIRECT_ADDR) : (INDEX_ADDR));
-    else if (second && (active[1].direct || active[1].immediate))
-        secondWord = secondWord | (0 << 2) | (active[1].direct ? (DIRECT_ADDR) : (IMMEDIATE_ADDR));
+    if (secondWord != 0)
+        addWord(secondWord, Code);
     */
-    addWord(secondWord, Code);
 }
 
 void writeFirstWord(const Operation *op, AddrMethodsOptions active[2])
 {
     unsigned srcAddrValue = 0, targetAddrValue = 0, firstWord = 0;
-    
+
     if (active[0].immediate)
-        srcAddrValue = 0x0;
+        srcAddrValue = IMMEDIATE_ADDR;
     else if (active[0].direct)
-        srcAddrValue = 0x1;
+        srcAddrValue = DIRECT_ADDR;
     else if (active[0].indirect)
-        srcAddrValue = 0x2;
-    else
-        srcAddrValue = 0x3;
-    
+        srcAddrValue = INDIRECT_ADDR;
+    else if (active[0].reg)
+        srcAddrValue = REGISTER_DIRECT_ADDR;
+
     if (active[1].immediate)
-        targetAddrValue = 0x0;
+        targetAddrValue = IMMEDIATE_ADDR;
     else if (active[1].direct)
-        targetAddrValue = 0x1;
+        targetAddrValue = DIRECT_ADDR;
     else if (active[1].indirect)
-        targetAddrValue = 0x2;
-    else
-        targetAddrValue = 0x3;
-    /* 000 000 000 000 000 */
-    /* firstWord = A  | (srcAddrValue << 3) | (targetAddrValue << 8) | (op->op << 11); */
-    firstWord = A | (srcAddrValue << 3) | (targetAddrValue << 7) | (op->op << 11);
+        targetAddrValue = INDIRECT_ADDR;
+    else if (active[1].reg)
+        targetAddrValue = REGISTER_DIRECT_ADDR;
+
+    firstWord = A | (targetAddrValue << 3) | (srcAddrValue << 7) | (op->op << 11);
     addWord(firstWord, Code);
 }
 
 void writeDirectOperandWord(char *labelName)
 {
 
-    unsigned base = 0, offset = 0;
+    unsigned base = 0, address = 0;
     if (isExternal(labelName))
     {
+        printf("is external! labelName:%s\n", labelName);
         base = getIC();
-        addWord((E << 16) | 0, Code);
-        offset = getIC();
-        addWord((E << 16) | 0, Code);
-        updateExtPositionData(labelName, base, offset);
+        addWord(E, Code);
+        updateExtPositionData(labelName, base, base + 1);
     }
-
     else
     {
-        base = getSymbolBaseAddress(labelName);
-        offset = getSymbolOffset(labelName);
-        addWord((R << 16) | base, Code);
-        addWord((R << 16) | offset, Code);
+        address = getSymbolAddress(labelName);
+        addWord((address << 3) | R, Code);
     }
 }
 
 void writeImmediateOperandWord(char *n)
 {
+    printf("n: %s\n", n);
     n++;
-    addWord((A << 16) | atoi(n), Code);
+    addWord(((atoi(n) << 3) | A), Code);
 }
 
 Bool detectOperandType(char *operand, AddrMethodsOptions active[2], int type)
 {
     if (!operand)
+        return True;
+
+    if (isValidImmediateParamter(operand))
         active[type].immediate = 1;
     else if (isRegistery(operand))
         active[type].reg = 1;
-    else if (isValidImmediateParamter(operand))
-        active[type].immediate = 1;
-    else if (isValidIndexParameter(operand))
+    else if (isValidIndirectParameter(operand))
         active[type].indirect = 1;
     else
     {
-
         if (isSymbolExist(operand))
         {
 
@@ -173,29 +202,8 @@ Bool detectOperandType(char *operand, AddrMethodsOptions active[2], int type)
     return True;
 }
 
-char *parseLabelNameFromIndexAddrOperand(char *s)
+int parseRegNumberFromOperand(char *s)
 {
-    char *p = strchr(s, '[');
-
-    *p = 0;
-
-    return s;
-}
-
-int parseRegNumberFromIndexAddrOperand(char *s)
-{
-    char *p = strchr(s, ']');
-
-    s = strchr(s, '[');
-    s++;
-    if (p)
-        *p = 0;
-
-    return getRegisteryNumber(s);
-}
-
- int parseRegNumberFromIndirectAddrOperand(char *s){
-    s = strchr(s,'r');
-    s++;
+    s = strchr(s, 'r');
     return getRegisteryNumber(s);
 }

@@ -95,8 +95,8 @@ int parseLabelNameFromIndirectAddrOperand(char *s);
    Returns the label name from the token it got.
 */
 
-int parseRegNumberFromIndirectAddrOperand(char *s);
-/* @ Function: parseRegNumberFromIndirectAddrOperand
+int parseRegNumberFromOperand(char *s);
+/* @ Function: parseRegNumberFromOperand
    @ Arguments: The function gets char *s, which is the operand from Indirect addressing method it parses.
    @ Description: The function parses out the register's number from the char *s it gets.
    Returns the register's number from the token it got.

@@ -87,6 +87,7 @@ void addWordToCodeImage(char *s)
 }
 void wordStringToWordObj(char *s, DataType type)
 {
+
     int j;
     int index = type == Code ? IC - MEMORY_START : DC - MEMORY_START;
     for (j = 0; j < BINARY_WORD_SIZE; j++)
@@ -139,7 +140,6 @@ void writeMemoryImageToObFile(FILE *fp)
     for (i = 0; i < totalSize; i++)
     {
         OctalImg[i] = *convertBinaryWordToOctal(&binaryImg[i]);
-        /*fprintf(fp, "%04d A%x-B%x-C%x-D%x-E%x\n", MEMORY_START + i, OctalImg[i]._A, OctalImg[i]._B, OctalImg[i]._C, OctalImg[i]._D, OctalImg[i]._E);*/
         fprintf(fp, "%04d %x%x%x%x%x\n", MEMORY_START + i, OctalImg[i]._A, OctalImg[i]._B, OctalImg[i]._C, OctalImg[i]._D, OctalImg[i]._E);
     }
 }

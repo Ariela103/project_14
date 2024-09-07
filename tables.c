@@ -76,7 +76,6 @@ void updateExtPositionData(char *name, unsigned base, unsigned offset)
 
     externalCount++;
 }
-
 void addExtListItem(char *name)
 {
 
@@ -239,6 +238,15 @@ int getSymbolBaseAddress(char *name)
         return -1;
 
     return p->val.s.base;
+}
+
+int getSymbolAddress(char *name)
+{
+    Item *p = lookup(name, Symbol);
+    if (p == NULL)
+        return -1;
+
+    return p->val.s.value;
 }
 
 int getSymbolOffset(char *name)
@@ -427,8 +435,8 @@ void writeExternalsToFile(FILE *fp)
 void writeSingleExternal(FILE *fp, char *name, unsigned base, unsigned offset, ExtPositionData *next)
 {
 
-    fprintf(fp, "%s BASE %u\n", name, base);
-    fprintf(fp, "%s OFFSET %u\n", name, offset);
+    fprintf(fp, "%s ADDRESS %u\n", name, base);
+
     if (next != NULL)
         writeSingleExternal(fp, name, next->base, next->offset, next->next);
 }

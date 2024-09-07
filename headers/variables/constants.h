@@ -14,10 +14,13 @@
 #define A 0x004
 #define R 0x002
 #define E 0x001
-#define IMMEDIATE_ADDR 0x00
-#define DIRECT_ADDR 0x01
-#define INDEX_ADDR 0xA
-#define REGISTER_DIRECT_ADDR 0xB
+
+
+#define IMMEDIATE_ADDR 1
+#define DIRECT_ADDR 2
+#define INDIRECT_ADDR 4
+#define REGISTER_DIRECT_ADDR 8
+
 
 #define R0 0x0
 #define R1 0x1

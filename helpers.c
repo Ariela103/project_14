@@ -16,18 +16,6 @@ char *trimFromLeft(char *s)
     return s;
 }
 
-/*
-char *decToHex(int num)
-{
-    int i = num, size = 0;
-    char *hex;
-    for (size = 0; i > 0; i = i / 16)
-        size++;
-    hex = (char *)calloc(size, sizeof(char *));
-    sprintf(hex, "%05x", num);
-    return hex;
-}
-*/
 
 char *decToOctal(int num)
 {
@@ -62,45 +50,6 @@ char *numToBin(int num)
     return binaryString;
 }
 
-/*
-HexWord *convertBinaryWordToHex(BinaryWord *word)
-{
-    int i = 0;
-    char hexDigits[4] = {0};
-    HexWord *newHex = (HexWord *)malloc(sizeof(HexWord));
-    for (i = BINARY_WORD_SIZE - 1; i >= 0; i--)
-    {
-        hexDigits[i % 4] = word->digit[i].on ? '1' : '0';
-        if (i % 4 == 0)
-        {
-            switch (i)
-            {
-            case 16:
-                newHex->_E = binaryStringToHexNumber(hexDigits);
-                break;
-            case 12:
-                newHex->_D = binaryStringToHexNumber(hexDigits);
-                break;
-            case 8:
-                newHex->_C = binaryStringToHexNumber(hexDigits);
-                break;
-            case 4:
-                newHex->_B = binaryStringToHexNumber(hexDigits);
-                break;
-            case 0:
-                newHex->_A = binaryStringToHexNumber(hexDigits);
-                break;
-            default:
-                break;
-            }
-
-            memset(hexDigits, 0, 4);
-        }
-    }
-
-    return newHex;
-}
-*/
 
 OctalWord *convertBinaryWordToOctal(BinaryWord *word)
 {
@@ -111,8 +60,6 @@ OctalWord *convertBinaryWordToOctal(BinaryWord *word)
     for (i = BINARY_WORD_SIZE - 1; i >= 0; i--)
     {
         octalDigits[i % 3] = word->digit[i].on ? '1' : '0';
-
-
         /* Once we've filled 3 binary digits, convert them to octal*/
         if (i % 3 == 0)
         {
@@ -150,7 +97,6 @@ OctalWord *convertBinaryWordToOctal(BinaryWord *word)
 
 unsigned binaryStringToOctalNumber(char binaryStr[3])
 {
-    printf("binaryStr:%s\n",binaryStr);
     if (!strcmp(binaryStr, "000"))
         return 0;
     if (!strcmp(binaryStr, "001"))

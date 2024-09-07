@@ -79,6 +79,7 @@ void printSymbolTable();
 int printSymbolItem(Item *item);
 void writeEntriesToFile(FILE *fp);
 int writeSingleEntry(Item *item, FILE *fp, int count);
+int getSymbolAddress(char *name);
 
 /*#####################################################################*/
 /*#####################################################################*/
