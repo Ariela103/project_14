@@ -6,6 +6,7 @@
 #define RAM_MEMORY_SIZE 4096
 #define MAX_LABEL_LEN 31
 #define MAX_LINE_LEN 81
+#define MAX_FILENAME_LEN 256
 
 /* Hash Table Hashsize (Result is currently 64)  */
 #define HASHSIZE ((RAM_MEMORY_SIZE / (MAX_LABEL_LEN + 1)) / 4)
@@ -15,12 +16,10 @@
 #define R 0x002
 #define E 0x001
 
-
 #define IMMEDIATE_ADDR 1
 #define DIRECT_ADDR 2
 #define INDIRECT_ADDR 4
 #define REGISTER_DIRECT_ADDR 8
-
 
 #define R0 0x0
 #define R1 0x1

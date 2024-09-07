@@ -1,0 +1,10 @@
+
+######################################################################
+Error!! occured in ./00_test_files/mixed/mixed_02.am on line number 9
+illegal operands input passed to source operand 
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/mixed/mixed_02.am on line number 11
+Illegal appearence of a comma after the last parameter
+######################################################################

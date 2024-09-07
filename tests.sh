@@ -1,4 +1,3 @@
-rm errors.log
 
 cd ./00_test_files/errors
 rm -f  *.log  *.am *.ob *.ent *.ext *.warnings *.errors 

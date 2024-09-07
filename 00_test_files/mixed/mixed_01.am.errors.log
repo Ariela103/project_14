@@ -1,0 +1,30 @@
+
+######################################################################
+Error!! occured in ./00_test_files/mixed/mixed_01.am on line number 4
+Illegal appearence of a comma after the last parameter
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/mixed/mixed_01.am on line number 4
+required destination operand is missing
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/mixed/mixed_01.am on line number 13
+Illegal appearence of a comma before the first parameter
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/mixed/mixed_01.am on line number 13
+required destination operand is missing
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/mixed/mixed_01.am on line number 14
+required destination operand is missing
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/mixed/mixed_01.am on line number 19
+missin closing quotes of string variable
+######################################################################

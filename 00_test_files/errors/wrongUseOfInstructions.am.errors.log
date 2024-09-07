@@ -1,0 +1,196 @@
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 6
+missin Space between instruction and arguments
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 6
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 8
+illegal Label Use Expected Operation Or Instruction
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 10
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 10
+Missing Commas between arguments
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 12
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 12
+Missing Commas between arguments
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 12
+Missing Commas between arguments
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 14
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 14
+Illegal appearence of a comma before the first parameter
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 16
+Missing space between label declaretion and instruction name
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 16
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 18
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 18
+Illegal appearence of a comma after the last parameter
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 20
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 20
+Number must be an integer!
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 22
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 22
+expected number but got letter instead, argument must be an integer number
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 22
+expected number but got letter instead, argument must be an integer number
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 24
+illegal token in beginning of current line,  not operation nor instruction or label decleration
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 25
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 25
+Illegal appearence of a comma before the first parameter
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 25
+Illegal appearence of a comma after the last parameter
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 27
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 27
+Missing Commas between arguments
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 27
+Extra commas between arguments
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 29
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 29
+Illegal appearence of a comma before the first parameter
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 29
+Missing Commas between arguments
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 31
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 31
+empty String Declatretion
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 33
+symbol already declared and defined locally,
+so it could not be re-declared as external variable.
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 35
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 35
+missin closing quotes of string variable
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 37
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 37
+expected opening quotes before string
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 39
+Label Name Already In Use
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 39
+expected opening quotes before string
+######################################################################
+
+######################################################################
+Error!! occured in ./00_test_files/errors/wrongUseOfInstructions.am on line number 39
+missin closing quotes of string variable
+######################################################################

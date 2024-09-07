@@ -1,19 +1,83 @@
 #include "data.h"
 
+/* Dynamic array of LogFiles (list of fileName entries) */
+static LogFiles *logFiles = NULL;
+static int logFilesCount = 0;
+
 static int (*line)() = &getCurrentLineNumber;
 static char *(*filePath)() = &getFileNamePath;
 static FILE *warningsFile = NULL, *errorsFile = NULL;
 static Bool isWarningFileExist = False;
 static Bool isErrorFileExist = False;
 
+/* Function to find or create log files for the given fileName */
+LogFiles *getLogFiles(char *fileName)
+{
+    int i = 0;
+    LogFiles *newLogFile;
+    /* Check if the fileName already exists in the logFiles array */
+    for (i = 0; i < logFilesCount; i++)
+    {
+        if (strcmp(logFiles[i].fileName, fileName) == 0)
+        {
+            return &logFiles[i]; /* Return existing log file pointers */
+        }
+    }
+
+    /* If not found, allocate space for a new log file entry */
+    logFiles = realloc(logFiles, (logFilesCount + 1) * sizeof(LogFiles));
+    newLogFile = &logFiles[logFilesCount];
+    logFilesCount++;
+
+    /* Initialize the new log file entry */
+    strncpy(newLogFile->fileName, fileName, MAX_FILENAME_LEN);
+    newLogFile->warningsFile = NULL;
+    newLogFile->errorsFile = NULL;
+
+    return newLogFile;
+}
+
+/* Function to open the errors log file */
+void openErrorLogFile(LogFiles *logFile)
+{
+    if (logFile->errorsFile == NULL)
+    {
+        char errorLogFileName[MAX_FILENAME_LEN];
+        snprintf(errorLogFileName, MAX_FILENAME_LEN, "%s.errors.log", logFile->fileName);
+        logFile->errorsFile = fopen(errorLogFileName, "w+");
+        if (logFile->errorsFile == NULL)
+        {
+            fprintf(stderr, "ERROR: Failed to create %s\n", errorLogFileName);
+        }
+    }
+}
+
+/* Function to open the warnings log file */
+void openWarningLogFile(LogFiles *logFile)
+{
+    if (logFile->warningsFile == NULL)
+    {
+        char warningLogFileName[MAX_FILENAME_LEN];
+        snprintf(warningLogFileName, MAX_FILENAME_LEN, "%s.warnings.log", logFile->fileName);
+        logFile->warningsFile = fopen(warningLogFileName, "w+");
+        if (logFile->warningsFile == NULL)
+        {
+            fprintf(stderr, "ERROR: Failed to create %s\n", warningLogFileName);
+        }
+    }
+}
+
 void fileCreationFailure(char *fileName)
 {
     extern FILE *errorsFile;
     extern Bool isErrorFileExist;
 
+    LogFiles *logFile = getLogFiles(fileName);
+    openErrorLogFile(logFile);
+
     if (!isErrorFileExist)
     {
-        if ((errorsFile = fopen("errors.log", "w+")) == NULL)
+        if ((errorsFile = logFile->errorsFile) == NULL)
         {
             fprintf(stderr, "\n######################################################################\n");
             fprintf(stderr, " FAILURE! failed to create %s error log file\n", fileName);
@@ -37,9 +101,12 @@ void fileOpeningFailure(char *fileName)
     extern FILE *errorsFile;
     extern Bool isErrorFileExist;
 
+    LogFiles *logFile = getLogFiles(fileName);
+    openErrorLogFile(logFile);
+
     if (!isErrorFileExist)
     {
-        if ((errorsFile = fopen("errors.log", "w+")) == NULL)
+        if ((errorsFile = logFile->errorsFile) == NULL)
         {
             fprintf(stderr, "\n######################################################################\n");
             fprintf(stderr, " FAILURE! failed to create %s error log file\n", fileName);
@@ -58,14 +125,18 @@ void fileOpeningFailure(char *fileName)
     fprintf(errorsFile, "######################################################################\n\n");
 }
 
-void yieldWarningIntoFile(Warning err)
+void yieldWarningIntoFile(Warning err, char *fileName)
 {
     extern Bool isWarningFileExist;
     extern FILE *warningsFile;
+
+    LogFiles *logFile = getLogFiles(fileName);
+    openWarningLogFile(logFile);
+    warningsFile = logFile->warningsFile;
+
     if (!isWarningFileExist)
     {
-
-        if ((warningsFile = fopen("warnings.log", "w+")) == NULL)
+        if (warningsFile == NULL)
             printf("Failed to open warning log file\n");
         else
             isWarningFileExist = True;
@@ -102,17 +173,23 @@ void yieldWarningIntoFile(Warning err)
     fprintf(warningsFile, "######################################################################\n\n");
 }
 
-void yieldErrorIntoFile(Error err)
+void yieldErrorIntoFile(Error err, char *fileName)
 {
     extern FILE *errorsFile;
     extern Bool isErrorFileExist;
+
+    LogFiles *logFile = getLogFiles(fileName);
+    openErrorLogFile(logFile);
+    errorsFile = logFiles->errorsFile;
+
     if (!isErrorFileExist)
     {
-        if ((errorsFile = fopen("errors.log", "w+")) == NULL)
-            printf("Failed to open erro log file\n");
+        if (errorsFile == NULL)
+            printf("Failed to open error log file\n");
         else
             isErrorFileExist = True;
     }
+
     fprintf(errorsFile, "\n######################################################################\n");
     fprintf(errorsFile, "Error!! occured in %s on line number %d\n", (*filePath)(), (*line)());
 
@@ -122,9 +199,6 @@ void yieldErrorIntoFile(Error err)
         fprintf(errorsFile, "Macro declaration without defining macro name!");
         break;
 
-    case registeryIndexOperandTypeIfOutOfAllowedRegisteriesRange:
-        fprintf(errorsFile, "illegal use of registery index operand addressing method\nRegistery Index addr method is allows to use only registeries\n that are between the r10 - r15!");
-        break;
     case illegalInputPassedAsOperandSrcOperand:
         fprintf(errorsFile, "illegal operands input passed to source operand ");
         break;
@@ -247,7 +321,7 @@ void yieldErrorIntoFile(Error err)
         fprintf(errorsFile, "illegal Macro Name Use Of Saved Keywords");
         break;
     case wrongRegisteryReferenceUndefinedReg:
-        fprintf(errorsFile, "undefined registery, registeries names are r0 - r15");
+        fprintf(errorsFile, "undefined registery, registeries names are r0 - r7");
         break;
 
     case fileCouldNotBeOpened:
@@ -367,9 +441,10 @@ void yieldErrorIntoFile(Error err)
     fprintf(errorsFile, "\n");
     fprintf(errorsFile, "######################################################################\n");
 }
+
 Bool yieldWarning(Warning err)
 {
-    yieldWarningIntoFile(err);
+    yieldWarningIntoFile(err, (*filePath)());
     fprintf(stderr, "\n######################################################################\n");
     fprintf(stderr, "Warning!! in %s on line number %d\n", (*filePath)(), (*line)());
     switch (err)
@@ -404,7 +479,7 @@ Bool yieldWarning(Warning err)
 
 Bool yieldError(Error err)
 {
-    yieldErrorIntoFile(err);
+    yieldErrorIntoFile(err, (*filePath)());
     fprintf(stderr, "\n######################################################################\n");
     fprintf(stderr, "Error!! occured in %s on line number %d\n", (*filePath)(), (*line)());
 
@@ -414,9 +489,7 @@ Bool yieldError(Error err)
     case macroDeclaretionWithoutDefiningMacroName:
         fprintf(stderr, "Macro declaration without defining macro name!");
         break;
-    case registeryIndexOperandTypeIfOutOfAllowedRegisteriesRange:
-        fprintf(stderr, "illegal use of registery index operand addressing method\nRegistery Index addr method is allows to use only registeries\n that are between the r10 - r15!");
-        break;
+
     case illegalInputPassedAsOperandSrcOperand:
         fprintf(stderr, "illegal operands input passed to source operand ");
         break;
@@ -542,7 +615,7 @@ Bool yieldError(Error err)
         fprintf(stderr, "illegal Macro Name Use Of Saved Keywords");
         break;
     case wrongRegisteryReferenceUndefinedReg:
-        fprintf(stderr, "undefined registery, registeries names are r0 - r15");
+        fprintf(stderr, "undefined registery, registeries names are r0 - r7");
         break;
 
     case fileCouldNotBeOpened:
@@ -582,6 +655,7 @@ Bool yieldError(Error err)
     case illegalLabelNameUseOfCharacters:
         fprintf(stderr, "illegal Label Name Use Of Characters");
         break;
+
     case illegalLabelDeclaration:
         fprintf(stderr, "illegal Label Declaration");
         break;
@@ -622,7 +696,7 @@ Bool yieldError(Error err)
 
     case wrongInstructionSyntaxExtraCommas:
     {
-        fprintf(stderr, "Extra comma between arguments");
+        fprintf(stderr, "extra comma between arguments");
         break;
     }
 
@@ -668,6 +742,20 @@ void closeOpenLogFiles()
 {
     extern FILE *warningsFile, *errorsFile;
     extern Bool isWarningFileExist, isErrorFileExist;
+    int i = 0;
+
+    for (i = 0; i < logFilesCount; i++)
+    {
+        if (logFiles[i].warningsFile != NULL)
+        {
+            fclose(logFiles[i].warningsFile);
+        }
+        if (logFiles[i].errorsFile != NULL)
+        {
+            fclose(logFiles[i].errorsFile);
+        }
+    }
+
     if (isWarningFileExist && warningsFile != NULL)
     {
         fclose(warningsFile);
@@ -678,4 +766,9 @@ void closeOpenLogFiles()
         fclose(errorsFile);
         isErrorFileExist = False;
     }
+
+    /* Free the logFiles array */
+    free(logFiles);
+    logFiles = NULL;
+    logFilesCount = 0;
 }

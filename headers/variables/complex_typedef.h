@@ -120,3 +120,11 @@ typedef struct Item
     } val;
     struct Item *next;
 } Item;
+
+/* Struct to store log file information for each fileName */
+typedef struct LogFiles
+{
+    char fileName[MAX_FILENAME_LEN];
+    FILE *warningsFile;
+    FILE *errorsFile;
+} LogFiles;

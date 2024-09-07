@@ -14,9 +14,9 @@ directory in which the terminal is currently on.
 */
 
 Bool yieldError(Error err);
-void yieldErrorIntoFile(Error err);
+void yieldErrorIntoFile(Error err, char *fileName);
 Bool yieldWarning(Warning err);
-void yieldWarningIntoFile(Warning err);
+void yieldWarningIntoFile(Warning err, char *fileName);
 void fileOpeningFailure(char *fileName);
 void fileCreationFailure(char *fileName);
 void closeOpenLogFiles();
