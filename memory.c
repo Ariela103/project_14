@@ -82,6 +82,7 @@ void addWordToDataImage(char *s)
 void addWordToCodeImage(char *s)
 {
     wordStringToWordObj(s, Code);
+    /*printBinaryImg();*/
     IC++;
 }
 void wordStringToWordObj(char *s, DataType type)
@@ -97,7 +98,7 @@ void printWordBinary(unsigned index)
     int j;
     for (j = 0; j < BINARY_WORD_SIZE; j++)
     {
-        if (j % 4 == 0)
+        if (j % 3 == 0)
             printf(" ");
         printf("%d", binaryImg[index].digit[j].on ? 1 : 0);
     }
@@ -134,6 +135,7 @@ void writeMemoryImageToObFile(FILE *fp)
     int i;
     int totalSize = DCF - MEMORY_START;
     fprintf(fp, "%d %d\n", ICF - MEMORY_START, DCF - ICF);
+    printBinaryImg();
     for (i = 0; i < totalSize; i++)
     {
         OctalImg[i] = *convertBinaryWordToOctal(&binaryImg[i]);

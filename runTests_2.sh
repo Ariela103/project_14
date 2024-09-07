@@ -1,3 +1,3 @@
 make 
-./compiler  ./___test_files/valid/valid_ariela
+./compiler  ./___test_files/valid/test01
 rm -f compiler 

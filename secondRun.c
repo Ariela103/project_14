@@ -7,24 +7,27 @@ Bool writeOperationBinary(char *operationName, char *args)
     const Operation *op = getOperationByName(operationName);
     char *first, *second;
     AddrMethodsOptions active[2] = {{0, 0, 0, 0}, {0, 0, 0, 0}};
+    Bool isValid = True;
     first = strtok(args, ", \t\n\f\r");
     second = strtok(NULL, ", \t\n\f\r");
-    writeFirstWord(op);
+    isValid = detectOperandType(first, active, 0) && detectOperandType(second, active, 1);
+    writeFirstWord(op, active);
 
-    if (first && second && (detectOperandType(first, active, 0) && detectOperandType(second, active, 1)))
+    if (first && second && isValid)
     {
 
         writeSecondWord(first, second, active, op);
         writeAdditionalOperandsWords(op, active[0], first);
         writeAdditionalOperandsWords(op, active[1], second);
     }
-    else if (!second && first && detectOperandType(first, active, 1))
+
+    else if (!second && first && isValid)
     {
         second = first;
         writeSecondWord(first, second, active, op);
         writeAdditionalOperandsWords(op, active[1], second);
     }
-    else if (!first && !second )
+    else if (!first && !second)
         return True;
 
     else
@@ -88,9 +91,30 @@ void writeSecondWord(char *first, char *second, AddrMethodsOptions active[2], co
     addWord(secondWord, Code);
 }
 
-void writeFirstWord(const Operation *op)
+void writeFirstWord(const Operation *op, AddrMethodsOptions active[2])
 {
-    unsigned firstWord = (A << 16) | op->op;
+    unsigned srcAddrValue = 0, targetAddrValue = 0, firstWord = 0;
+    
+    if (active[0].immediate)
+        srcAddrValue = 0x0;
+    else if (active[0].direct)
+        srcAddrValue = 0x1;
+    else if (active[0].indirect)
+        srcAddrValue = 0x2;
+    else
+        srcAddrValue = 0x3;
+    
+    if (active[1].immediate)
+        targetAddrValue = 0x0;
+    else if (active[1].direct)
+        targetAddrValue = 0x1;
+    else if (active[1].indirect)
+        targetAddrValue = 0x2;
+    else
+        targetAddrValue = 0x3;
+    /* 000 000 000 000 000 */
+    /* firstWord = A  | (srcAddrValue << 3) | (targetAddrValue << 8) | (op->op << 11); */
+    firstWord = A | (srcAddrValue << 3) | (targetAddrValue << 7) | (op->op << 11);
     addWord(firstWord, Code);
 }
 
@@ -124,8 +148,9 @@ void writeImmediateOperandWord(char *n)
 
 Bool detectOperandType(char *operand, AddrMethodsOptions active[2], int type)
 {
-
-    if (isRegistery(operand))
+    if (!operand)
+        active[type].immediate = 1;
+    else if (isRegistery(operand))
         active[type].reg = 1;
     else if (isValidImmediateParamter(operand))
         active[type].immediate = 1;

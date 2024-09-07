@@ -49,8 +49,7 @@ Bool writeStringInstruction(char *s);
    The function returns true.
 */
 
-
-void writeFirstWord(const Operation *op);
+void writeFirstWord(const Operation *op, AddrMethodsOptions active[2]);
 /* @ Function: writeFirstWord
    @ Arguments: The function gets const Operation *op- the operation it writes uts first word.
    @ Description: The function writes in the memory the first word of the operation and its parameter by writing the opcode of the operation into the memory.

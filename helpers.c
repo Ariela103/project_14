@@ -16,7 +16,6 @@ char *trimFromLeft(char *s)
     return s;
 }
 
-
 /*
 char *decToHex(int num)
 {
@@ -29,107 +28,40 @@ char *decToHex(int num)
     return hex;
 }
 */
-char *decToOctal(int num) {
+
+char *decToOctal(int num)
+{
     int i = num, size = 0;
     char *octal;
-    
+
     for (size = 0; i > 0; i = i / 8)
         size++;
-    
+
     octal = (char *)calloc(size + 1, sizeof(char));
     sprintf(octal, "%0*o", size, num);
-    
+
     return octal;
 }
 
-
-
-
 char *numToBin(int num)
 {
+    /* Allocate memory for the binary string (15 characters + null terminator) */
     int i = 0;
-    unsigned int result;
-    char *word, hex[6];
-    word = (char *)calloc(BINARY_WORD_SIZE + 1, sizeof(char *));
-    if (num < 0)
+    char *binaryString = (char *)calloc(BINARY_WORD_SIZE + 1, sizeof(char));
+
+    /* Mask the number to fit within 15 bits (two's complement) */
+    unsigned int maskedNum = num & ((1 << BINARY_WORD_SIZE) - 1); /* Only keep the last 15 bits */
+
+    /* Convert the masked number to binary string (from right to left) */
+    for (i = BINARY_WORD_SIZE - 1; i >= 0; i--)
     {
-        result = abs(num);
-        result = ~result;
-        result++;
-        sprintf(hex, "%05x", (int)(result & 0x4ffff));
-    }
-    else
-        sprintf(hex, "%05x", (int)num & 0xfffff);
-
-    while (hex[i] != '\0')
-    {
-        switch (hex[i])
-        {
-
-        case '0':
-            strcat(word, "0000");
-            break;
-        case '1':
-            strcat(word, "0001");
-            break;
-        case '2':
-            strcat(word, "0010");
-            break;
-        case '3':
-            strcat(word, "0011");
-            break;
-        case '4':
-            strcat(word, "0100");
-            break;
-        case '5':
-            strcat(word, "0101");
-            break;
-        case '6':
-            strcat(word, "0110");
-            break;
-        case '7':
-            strcat(word, "0111");
-            break;
-        case '8':
-            strcat(word, "1000");
-            break;
-        case '9':
-            strcat(word, "1001");
-            break;
-        case 'A':
-        case 'a':
-            strcat(word, "1010");
-            break;
-        case 'B':
-        case 'b':
-            strcat(word, "1011");
-            break;
-        case 'C':
-        case 'c':
-            strcat(word, "1100");
-            break;
-        case 'D':
-        case 'd':
-            strcat(word, "1101");
-            break;
-        case 'E':
-        case 'e':
-            strcat(word, "1110");
-            break;
-        case 'F':
-        case 'f':
-            strcat(word, "1111");
-            break;
-        default:
-            break;
-        }
-
-        i++;
+        binaryString[i] = (maskedNum & 1) ? '1' : '0'; /*Get the last bit*/
+        maskedNum >>= 1;                               /*Shift right*/
     }
 
-    strcat(word, "\0");
-    return word;
+    return binaryString;
 }
+
 /*
 HexWord *convertBinaryWordToHex(BinaryWord *word)
 {
@@ -170,38 +102,42 @@ HexWord *convertBinaryWordToHex(BinaryWord *word)
 }
 */
 
-OctalWord *convertBinaryWordToOctal(BinaryWord *word) {
+OctalWord *convertBinaryWordToOctal(BinaryWord *word)
+{
     int i = 0;
-    char octalDigits[3] = {0};
+    char octalDigits[4] = {0,0,0,'\0'};
     OctalWord *newOctal = (OctalWord *)malloc(sizeof(OctalWord));
 
-    for (i = BINARY_WORD_SIZE - 1; i >= 0; i--) {
+    for (i = BINARY_WORD_SIZE - 1; i >= 0; i--)
+    {
         octalDigits[i % 3] = word->digit[i].on ? '1' : '0';
-        
+
+
         /* Once we've filled 3 binary digits, convert them to octal*/
-        if (i % 3 == 0) {
+        if (i % 3 == 0)
+        {
             /* Calculate the octal number from the 3 binary digits */
             char octalValue = binaryStringToOctalNumber(octalDigits);
-
             /* Determine which field of newOctal to store the octal value */
-            switch (i / 3) {
-                case 4:
-                    newOctal->_A = octalValue;
-                    break;
-                case 3:
-                    newOctal->_B = octalValue;
-                    break;
-                case 2:
-                    newOctal->_C = octalValue;
-                    break;
-                case 1:
-                    newOctal->_D = octalValue;
-                    break;
-                case 0:
-                    newOctal->_E = octalValue;
-                    break;
-                default:
-                    break;
+            switch (i)
+            {
+            case 12:
+                newOctal->_E = octalValue;
+                break;
+            case 9:
+                newOctal->_D = octalValue;
+                break;
+            case 6:
+                newOctal->_C = octalValue;
+                break;
+            case 3:
+                newOctal->_B = octalValue;
+                break;
+            case 0:
+                newOctal->_A = octalValue;
+                break;
+            default:
+                break;
             }
 
             /* Reset the octalDigits array */
@@ -212,8 +148,9 @@ OctalWord *convertBinaryWordToOctal(BinaryWord *word) {
     return newOctal;
 }
 
-unsigned binaryStringToOctalNumber(char binaryStr[3]) {
-
+unsigned binaryStringToOctalNumber(char binaryStr[3])
+{
+    printf("binaryStr:%s\n",binaryStr);
     if (!strcmp(binaryStr, "000"))
         return 0;
     if (!strcmp(binaryStr, "001"))
@@ -272,4 +209,3 @@ unsigned binaryStringToHexNumber(char binaryStr[4])
 
     return 0;
 }
-
