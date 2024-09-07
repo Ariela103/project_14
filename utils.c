@@ -70,7 +70,6 @@ Bool isValidImmediateParamter(char *s)
 
 /*GUY*/
 
-
 /*
 Bool isIndexParameter(char *s)
 {
@@ -96,16 +95,17 @@ Bool isIndexParameter(char *s)
 
 */
 
-
 Bool isIndirectParameter(char *s)
 {
-  int len = strlen(s);
-  return (len == 3 && s[0] == '*' && s[1] == 'r');
+    int len = strlen(s);
+    return (len == 3 && s[0] == '*' && s[1] == 'r');
 }
-    
-Bool isValidIndirectParameter(char *s){
 
-    if (isIndirectParameter(s) == True){
+Bool isValidIndirectParameter(char *s)
+{
+
+    if (isIndirectParameter(s) == True)
+    {
         if (s[2] >= '0' || s[2] < '8')
             return True;
     }
@@ -136,9 +136,6 @@ Bool isValidIndexParameter(char *s)
     }
     return result;
 }
-
-
-
 
 Bool isComment(char *s)
 {

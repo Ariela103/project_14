@@ -1,33 +1,19 @@
 #include "data.h"
 
-void writeAdditionalOperandsWords(const Operation *op, AddrMethodsOptions active, char *value);
-
 Bool writeOperationBinary(char *operationName, char *args)
 {
     const Operation *op = getOperationByName(operationName);
     char *first, *second;
     AddrMethodsOptions active[2] = {{0, 0, 0, 0}, {0, 0, 0, 0}};
     Bool isValid = True;
-    printf("operationName:%s\n", operationName);
     first = strtok(args, ", \t\n\f\r");
     second = strtok(NULL, ", \t\n\f\r");
-    /*if (strcmp(first, ".extern"))
-        return True;*/
 
     if (first && second)
     {
-
-        /*
-         00144
-         000 000 001 100 100
-         */
         isValid = detectOperandType(first, active, 0) && detectOperandType(second, active, 1);
         writeFirstWord(op, active);
-        writeSecondWord(first, second, active, op);
-        /*
-        writeAdditionalOperandsWords(op, active[0], first);
-        writeAdditionalOperandsWords(op, active[1], second);
-        */
+        writeSecondAndThirdWords(first, second, active, op);
     }
 
     else if (!second && first)
@@ -35,9 +21,7 @@ Bool writeOperationBinary(char *operationName, char *args)
         second = first;
         isValid = detectOperandType(second, active, 1);
         writeFirstWord(op, active);
-        writeSecondWord(NULL, second, active, op);
-
-        /*writeAdditionalOperandsWords(op, active[1], second);*/
+        writeSecondAndThirdWords(NULL, second, active, op);
     }
     else if (!first && !second)
         writeFirstWord(op, active);
@@ -45,58 +29,13 @@ Bool writeOperationBinary(char *operationName, char *args)
     return isValid;
 }
 
-void writeAdditionalOperandsWords(const Operation *op, AddrMethodsOptions active, char *value)
+void writeSecondAndThirdWords(char *first, char *second, AddrMethodsOptions active[2], const Operation *op)
 {
-
-    if (active.indirect)
-    {
-        /*parseLabelNameFromIndirectAddrOperand(value);*/
-        writeDirectOperandWord(value);
-    }
-    else if (active.direct)
-        writeDirectOperandWord(value);
-    else if (active.immediate)
-        writeImmediateOperandWord(value);
-}
-
-Bool writeDataInstruction(char *token)
-{
-    int num;
-    while (token != NULL)
-    {
-        num = atoi(token);
-        addWord(num, Data);
-        token = strtok(NULL, ", \t\n\f\r");
-    }
-    return True;
-}
-
-Bool writeStringInstruction(char *s)
-{
-    char *start = strchr(s, '\"');
-    int i, len;
-    start++;
-    len = strlen(start);
-
-    /*printf("string to add:%s length:%d\n", start, len);*/
-
-    for (i = 0; i < len - 1; i++)
-        addWord(start[i], Data);
-
-    addWord('\0', Data);
-    return True;
-}
-
-void writeSecondWord(char *first, char *second, AddrMethodsOptions active[2], const Operation *op)
-{
-    unsigned secondWord = 0;
     /* second word contains two registeries operands*/
     if ((active[0].reg && active[1].reg) || (active[0].reg && active[1].indirect) || (active[0].indirect && active[1].reg) || (active[0].indirect && active[1].indirect))
         addWord((parseRegNumberFromOperand(first) << 6) | (parseRegNumberFromOperand(second) << 3) | A, Code);
     else
     {
-        /* first operand */
-        printf("first:%s second:%s\n", first, second);
         if (first)
         {
             if (active[0].reg || active[0].indirect)
@@ -117,11 +56,6 @@ void writeSecondWord(char *first, char *second, AddrMethodsOptions active[2], co
                 writeImmediateOperandWord(second);
         }
     }
-
-    /*
-    if (secondWord != 0)
-        addWord(secondWord, Code);
-    */
 }
 
 void writeFirstWord(const Operation *op, AddrMethodsOptions active[2])
@@ -156,7 +90,6 @@ void writeDirectOperandWord(char *labelName)
     unsigned base = 0, address = 0;
     if (isExternal(labelName))
     {
-        printf("is external! labelName:%s\n", labelName);
         base = getIC();
         addWord(E, Code);
         updateExtPositionData(labelName, base, base + 1);
@@ -170,7 +103,6 @@ void writeDirectOperandWord(char *labelName)
 
 void writeImmediateOperandWord(char *n)
 {
-    printf("n: %s\n", n);
     n++;
     addWord(((atoi(n) << 3) | A), Code);
 }
@@ -199,6 +131,31 @@ Bool detectOperandType(char *operand, AddrMethodsOptions active[2], int type)
         else
             return yieldError(labelNotExist);
     }
+    return True;
+}
+
+Bool writeDataInstruction(char *token)
+{
+    int num;
+    while (token != NULL)
+    {
+        num = atoi(token);
+        addWord(num, Data);
+        token = strtok(NULL, ", \t\n\f\r");
+    }
+    return True;
+}
+
+Bool writeStringInstruction(char *s)
+{
+    char *start = strchr(s, '\"');
+    int i, len;
+    start++;
+    len = strlen(start);
+    for (i = 0; i < len - 1; i++)
+        addWord(start[i], Data);
+
+    addWord('\0', Data);
     return True;
 }
 

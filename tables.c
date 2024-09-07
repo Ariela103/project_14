@@ -3,11 +3,9 @@ static Item *symbols[HASHSIZE] = {0};
 static Item *macros[HASHSIZE] = {0};
 static unsigned entriesCount = 0;
 static unsigned externalCount = 0;
-
 static ExtListItem *extListHead = NULL;
 extern unsigned getICF();
 extern Bool verifyLabelNaming(char *s);
-
 void findAllExternals();
 void addExtListItem(char *name);
 void resetExtList();
@@ -188,11 +186,7 @@ Bool addSymbol(char *name, unsigned value, unsigned isCode, unsigned isData, uns
 
 Bool updateSymbol(Item *p, unsigned value, unsigned isCode, unsigned isData, unsigned isEntry, unsigned isExternal)
 {
-    /*     printf("inside updateSymbol\n");
-        printf("name:%s value:%d isCode:%u isData:%u isEntry:%u isExternal:%u\n", p->name, value, isCode, isData, isEntry, isExternal);
-     */
-    /*     printf("inside updateSymbol\n");
-     */
+
     if (((p->val.s.attrs.external) && (value || isData || isEntry || isCode)))
         return yieldError(illegalOverrideOfExternalSymbol);
 
@@ -435,7 +429,7 @@ void writeExternalsToFile(FILE *fp)
 void writeSingleExternal(FILE *fp, char *name, unsigned base, unsigned offset, ExtPositionData *next)
 {
 
-    fprintf(fp, "%s ADDRESS %u\n", name, base);
+    fprintf(fp, "%s %04u\n", name, base);
 
     if (next != NULL)
         writeSingleExternal(fp, name, next->base, next->offset, next->next);
@@ -457,7 +451,7 @@ int writeSingleEntry(Item *item, FILE *fp, int count)
 {
     if (item->val.s.attrs.entry)
     {
-        fprintf(fp, "%s,%d,%d\n", item->name, item->val.s.base, item->val.s.offset);
+        fprintf(fp, "%s %04d\n", item->name, item->val.s.base + item->val.s.offset);
         count++;
     }
     if (item->next != NULL)

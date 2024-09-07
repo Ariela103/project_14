@@ -136,7 +136,6 @@ void writeMemoryImageToObFile(FILE *fp)
     int i;
     int totalSize = DCF - MEMORY_START;
     fprintf(fp, "%d %d\n", ICF - MEMORY_START, DCF - ICF);
-    printBinaryImg();
     for (i = 0; i < totalSize; i++)
     {
         OctalImg[i] = *convertBinaryWordToOctal(&binaryImg[i]);

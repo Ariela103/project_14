@@ -4,10 +4,14 @@
 mov #3, #-6
 LABEL1: .data 6, -17, 5   ,  2,3
 LABEL2: cmp  LABEL1, r5
-;wrong addressing method for add
-add r2  ,#7
-;wrong addressing method for sub
-sub LABEL2[r13]   ,   #1
+;wrong source operand, registery number out of range
+add r9  ,#7
+
+;wrong target operand, illegal target operand
+add r2  ,*r3
+
+;wrong target addressing method for sub
+sub r5   ,   #1
 ;wrong addressing method for lea
 lea #52 , r3
 ;wrong addressing method for lea
