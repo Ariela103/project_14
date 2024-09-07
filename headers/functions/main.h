@@ -2,21 +2,14 @@
 /*
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
---------------------------- errors.c General Overview: ---------------------------
+--------------------------- compiler.c General Overview: ---------------------------
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
-This file is used for handling different errors our assembler might encounter during all the stages of the
-assembler. the errors and printed to the stderr and to a errors.log file that will be created in the root
-directory in which the terminal is currently on.
+Main file that includes the main function, it gets the files input from the user and then the handleSingleFile
+is executing the full proccess of the assembler for each file.
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 */
-
-Bool reportError(Error err);
-void reportErrorIntoFile(Error err, char *fileName);
-Bool reportWarning(Warning err);
-void reportWarningIntoFile(Warning err, char *fileName);
-void fileOpeningFailure(char *fileName);
-void fileCreationFailure(char *fileName);
-void closeOpenLogFiles();
+void handleSingleFile(char *arg);
+int handleSourceFiles(int argc, char *argv[]);

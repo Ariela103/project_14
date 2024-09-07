@@ -2,7 +2,7 @@
 
 /**
  * cloneString
- * -----------
+ * ------
  * This function creates a duplicate of the input string.
  *
  * Parameters:
@@ -26,7 +26,7 @@ char *cloneString(char *s)
 
 /**
  * trimFromLeft
- * ------------
+ * ------
  * This function removes any leading whitespace characters from the input string.
  *
  * Parameters:
@@ -45,7 +45,7 @@ char *trimFromLeft(char *s)
 
 /**
  * decToOctal
- * ----------
+ * -----
  * This function converts a decimal integer to its octal representation.
  *
  * Parameters:
@@ -72,7 +72,7 @@ char *decToOctal(int num)
 
 /**
  * numToBin
- * --------
+ * ----
  * This function converts a decimal number to its binary representation as a 15-bit string.
  *
  * Parameters:
@@ -102,7 +102,7 @@ char *numToBin(int num)
 
 /**
  * convertBinaryWordToOctal
- * ------------------------
+ * ------------
  * This function converts a 15-bit binary word to its octal equivalent, broken into groups of 3 bits.
  *
  * Parameters:
@@ -161,7 +161,7 @@ OctalWord *convertBinaryWordToOctal(BinaryWord *word)
 
 /**
  * binaryStringToOctalNumber
- * -------------------------
+ * -------------
  * This function converts a 3-bit binary string to its octal equivalent.
  *
  * Parameters:

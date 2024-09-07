@@ -1,11 +1,11 @@
 #include "data.h"
-void resetMemoryCounters();
-void initTables();
-void exportFiles();
-void closeOpenLogFiles();
-void allocMemoryImg();
-void calcFinalAddrsCountersValues();
-void freeHashTable(ItemType type);
+extern void resetMemoryCounters();
+extern void initTables();
+extern void exportFiles();
+extern void closeOpenLogFiles();
+extern void allocMemoryImg();
+extern void calcFinalAddrsCountersValues();
+extern void freeHashTable(ItemType type);
 
 int main(int argc, char *argv[])
 {
@@ -44,12 +44,12 @@ int handleSourceFiles(int argc, char *argv[])
     return 0;
 }
 
-void handleSingleFile(char *arg)
+extern void handleSingleFile(char *arg)
 {
     FILE *src = NULL, *target = NULL;
     void (*setPath)(char *) = &setFileNamePath;
-    State (*globalState)() = &getGlobalState;
     void (*setState)(State) = &setGlobalState;
+    State (*globalState)() = &getGlobalState;
     char *fileName = (char *)calloc(strlen(arg) + 4, sizeof(char *)); /* Allocating memory for the file name with extension */
 
     /*

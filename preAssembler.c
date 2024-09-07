@@ -9,13 +9,13 @@ void (*setState)(State) = &setGlobalState;
 State (*globalState)() = &getGlobalState;
 
 /** Function declarations for macro processing **/
-Bool isPossiblyUseOfMacro(char *s);
-Bool isMacroOpening(char *s);
-Bool isMacroClosing(char *s);
-Bool isLegalMacroName(char *s);
-Item *addMacro(char *name, int start, int end);
-Item *updateMacro(char *name, int start, int end);
-Item *getMacro(char *s);
+extern Bool isPossiblyUseOfMacro(char *s);
+extern Bool isMacroOpening(char *s);
+extern Bool isMacroClosing(char *s);
+extern Bool isLegalMacroName(char *s);
+extern Item *addMacro(char *name, int start, int end);
+extern Item *updateMacro(char *name, int start, int end);
+extern Item *getMacro(char *s);
 
 /**
  * parseMacros

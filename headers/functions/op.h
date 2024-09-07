@@ -2,21 +2,21 @@
 /*
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
---------------------------- errors.c General Overview: ---------------------------
+--------------------------- Operation.c/h General Overview: ---------------------------
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
-This file is used for handling different errors our assembler might encounter during all the stages of the
-assembler. the errors and printed to the stderr and to a errors.log file that will be created in the root
-directory in which the terminal is currently on.
+
+This file holds the operation table information and contain functions that their purpose is to share different
+parts of the operation information from this table.
+
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 */
 
-Bool reportError(Error err);
-void reportErrorIntoFile(Error err, char *fileName);
-Bool reportWarning(Warning err);
-void reportWarningIntoFile(Warning err, char *fileName);
-void fileOpeningFailure(char *fileName);
-void fileCreationFailure(char *fileName);
-void closeOpenLogFiles();
+Bool isOperationName(char *s);
+const Operation *getOperationByName(char *s);
+const Operation *getOperationByIndex(unsigned int i);
+const char *getOperationName(char *s);
+int getOpIndex(char *s);
+Bool isOperationNotStrict(char *s);

@@ -1,18 +1,18 @@
 
 /*
-##########################################################################################################
-##########################################################################################################
-#################################### utils.c/utils.h General Overview: ###################################
-##########################################################################################################
-##########################################################################################################
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+--------------------------- utils.c/utils.h General Overview:
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
 
 Utils.c files contains most of all helpers functions that are used for verifying and checking and
 validating tokens identity, funtion here are mainly used out side of this file by other functions that deals
 with parsing the assembly code.
 
-##########################################################################################################
-##########################################################################################################
-##########################################################################################################
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------
 */
 
 Bool isMacroOpening(char *s);
@@ -70,19 +70,7 @@ Bool isValidImmediateParamter(char *s);
 
 */
 
-Bool isValidIndexParameter(char *s);
-/* @ Function: isValidIndexParamter
-   @ Arguments: The function gets a char *s, the string it checks whether it is a valid index parameter or not.
-   @ Description:The function checks if char *s is a valid index parameter by checkin if it is a label and a register (between 10-15) in parenthesis afterwards
-   Returns true if it is a valid index parameter, and false if it isn't.
-*/
-
-Bool isIndexParameter(char *s);
-/* @ Function: isIndexParameter
-   @ Arguments: The function gets a char *s, the string it checks whether it is a index parameter or not.
-   @ Description:The function checks if char *s is a valid index parameter by checkin if it is a label and a register (any register, not strict to 10-15) in parenthesis afterwards
-   Returns true if it is a valid index parameter, and false if it isn't.
-*/
+Bool isValidIndirectParameter(char *s);
 
 Bool isComment(char *s);
 /* @ Function: isComment
@@ -147,5 +135,3 @@ Bool verifyLabelNamingAndPrintErrors(char *s);
    @ Description: The function makes sure the name of the label is valid, by checking things like its length, if it is equal to an operation...
    If it finds an error it yields (prints) it and returns false, else returns true.
 */
-
-Bool isValidImmediateParamter(char *s);
