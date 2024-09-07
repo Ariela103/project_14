@@ -28,7 +28,7 @@ Bool isInstruction(char *s)
 
     else if (strstr(s, DATA) != NULL || strstr(s, STRING) != NULL || strstr(s, ENTRY) != NULL || strstr(s, EXTERNAL) != NULL)
     {
-        /*         yieldError(missinSpaceAfterInstruction); */
+        /*         reportError(missinSpaceAfterInstruction); */
         return True;
     }
     else
@@ -253,19 +253,19 @@ Bool verifyLabelNamingAndPrintErrors(char *s)
 
     /* if label name does not start with a alphabet letter */
     if (isalpha(s[0]) == 0)
-        return yieldError(illegalLabelNameUseOfCharacters);
+        return reportError(illegalLabelNameUseOfCharacters);
 
     /* maximum label name length is 31 characters */
     else if (labelLength > MAX_LABEL_LEN)
-        return yieldError(illegalLabelNameLength);
+        return reportError(illegalLabelNameLength);
     else if (labelLength < 1)
-        return yieldError(illegalLabelNameLength);
+        return reportError(illegalLabelNameLength);
 
     else if (isRegistery(s))
-        return yieldError(illegalLabelNameUseOfSavedKeywordUsingRegisteryName);
+        return reportError(illegalLabelNameUseOfSavedKeywordUsingRegisteryName);
 
     else if (isOperationName(s))
-        return yieldError(illegalLabelNameUseOfSavedKeywordUsingOperationName);
+        return reportError(illegalLabelNameUseOfSavedKeywordUsingOperationName);
 
     else
     {
@@ -273,7 +273,7 @@ Bool verifyLabelNamingAndPrintErrors(char *s)
         while (i < labelLength)
         {
             if (!isalnum(s[i]))
-                return yieldError(illegalLabelNameUseOfCharacters);
+                return reportError(illegalLabelNameUseOfCharacters);
 
             i++;
         }

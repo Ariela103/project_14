@@ -33,13 +33,13 @@ void parseMacros(char *line, char *token, FILE *src, FILE *target)
 
         if (next == NULL)
         {
-            yieldError(macroDeclaretionWithoutDefiningMacroName);
+            reportError(macroDeclaretionWithoutDefiningMacroName);
             (*setState)(assemblyCodeFailedToCompile);
             return;
         }
         if (!isLegalMacroName(next))
         {
-            yieldError(illegalMacroNameUseOfSavedKeywords);
+            reportError(illegalMacroNameUseOfSavedKeywords);
             (*setState)(assemblyCodeFailedToCompile);
             return;
         }

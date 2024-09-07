@@ -120,7 +120,7 @@ Item *install(char *name, ItemType type)
 
     if (np == NULL)
     {
-        yieldError(memoryAllocationFailure);
+        reportError(memoryAllocationFailure);
         return NULL;
     }
     else
@@ -188,15 +188,15 @@ Bool updateSymbol(Item *p, unsigned value, unsigned isCode, unsigned isData, uns
 {
 
     if (((p->val.s.attrs.external) && (value || isData || isEntry || isCode)))
-        return yieldError(illegalOverrideOfExternalSymbol);
+        return reportError(illegalOverrideOfExternalSymbol);
 
     else if ((p->val.s.attrs.code || p->val.s.attrs.data || p->val.s.attrs.entry) && isExternal)
-        return yieldError(illegalOverrideOfLocalSymbolWithExternalSymbol);
+        return reportError(illegalOverrideOfLocalSymbolWithExternalSymbol);
 
     else
     {
         if ((isData && isCode) || (isCode && p->val.s.attrs.data) || (isData && p->val.s.attrs.code))
-            return yieldError(illegalSymbolNameAlreadyInUse);
+            return reportError(illegalSymbolNameAlreadyInUse);
 
         if (value)
         {
@@ -330,7 +330,7 @@ Item *updateSymbolAddressValue(char *name, int newValue)
         p->val.s.value = newValue;
     }
     else
-        yieldError(symbolDoesNotExist);
+        reportError(symbolDoesNotExist);
 
     return p;
 }
@@ -346,7 +346,7 @@ Item *addMacro(char *name, int start, int end)
 
     if (macro != NULL)
     {
-        yieldError(illegalMacroNameAlreadyInUse);
+        reportError(illegalMacroNameAlreadyInUse);
         return NULL;
     }
     else

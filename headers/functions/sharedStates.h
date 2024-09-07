@@ -50,7 +50,7 @@ char *getFileNamePath();
    @ Aruments: The function doesn't get any arguments.
    @ Description: The function is a getter function for the state of the current file name path.
    The function returns separated copy of the string (clone), in order for other parts of the program
-   that are also dealing with creating an outputing different file outputs (.ob, .ext, .ent, yieldError and more)
+   that are also dealing with creating an outputing different file outputs (.ob, .ext, .ent, reportError and more)
     for each file input the program gets fromthe user.
 */
 

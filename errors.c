@@ -125,7 +125,7 @@ void fileOpeningFailure(char *fileName)
     fprintf(errorsFile, "######################################################################\n\n");
 }
 
-void yieldWarningIntoFile(Warning err, char *fileName)
+void reportWarningIntoFile(Warning err, char *fileName)
 {
     extern Bool isWarningFileExist;
     extern FILE *warningsFile;
@@ -173,7 +173,7 @@ void yieldWarningIntoFile(Warning err, char *fileName)
     fprintf(warningsFile, "######################################################################\n\n");
 }
 
-void yieldErrorIntoFile(Error err, char *fileName)
+void reportErrorIntoFile(Error err, char *fileName)
 {
     extern FILE *errorsFile;
     extern Bool isErrorFileExist;
@@ -442,9 +442,9 @@ void yieldErrorIntoFile(Error err, char *fileName)
     fprintf(errorsFile, "######################################################################\n");
 }
 
-Bool yieldWarning(Warning err)
+Bool reportWarning(Warning err)
 {
-    yieldWarningIntoFile(err, (*filePath)());
+    reportWarningIntoFile(err, (*filePath)());
     fprintf(stderr, "\n######################################################################\n");
     fprintf(stderr, "Warning!! in %s on line number %d\n", (*filePath)(), (*line)());
     switch (err)
@@ -477,9 +477,9 @@ Bool yieldWarning(Warning err)
     return True;
 }
 
-Bool yieldError(Error err)
+Bool reportError(Error err)
 {
-    yieldErrorIntoFile(err, (*filePath)());
+    reportErrorIntoFile(err, (*filePath)());
     fprintf(stderr, "\n######################################################################\n");
     fprintf(stderr, "Error!! occured in %s on line number %d\n", (*filePath)(), (*line)());
 
