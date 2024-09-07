@@ -294,7 +294,7 @@ void parseAssemblyCode(FILE *src)
     if (!isValidCode)
         nextState = assemblyCodeFailedToCompile;
     else
-        nextState = (*globalState)() == firstRun ? secondRun : exportFiles;
+        nextState = (*globalState)() == firstRun ? secondRun : createOutputFiles;
 
     (*resetCurrentLineCounter)();
     (*setState)(nextState);

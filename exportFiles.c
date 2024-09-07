@@ -3,25 +3,25 @@
 extern void fileCreationFailure(char *fileName);
 static char *(*baseFileName)() = &getFileNamePath;
 
-/*  void exportFilesMainHandler()
-This function calls other functions that will create the .ob file,
-.ent file and .ext file if there are any entry labels, and .ext file
-if there are any external labels.*/
+/*  void exportFiles()
+    This function is responsible for exporting the .ob, .ent, and .ext files.
+    It creates the .ob file first, then generates the .ent file if any entry labels exist,
+    and the .ext file if any external labels exist.*/
 
-void exportFilesMainHandler()
+void exportFiles()
 {
     printf("Finished Successfully, about to export files!\n");
-    generateObFile();
+    createObFile();
     if (areEntriesExist())
         createEntriesFile();
     if (areExternalsExist())
         createExternalsFile();
 }
 
-/* void generateObFile()
-This function generates the .ob files by writing the memory image,
-if the file can't be generate it yields error  */
-void generateObFile()
+/* void createObFile()
+    This function creates the .ob file by writing the memory image.
+    If the file can't be created, an error is logged. */
+void createObFile()
 {
     FILE *ob;
     char *fileName = (*baseFileName)();
@@ -39,8 +39,8 @@ void generateObFile()
 }
 
 /* void createEntriesFile()
-This function generates the .ent files (as long as there are entry labels) by writing
-it into the file, if the file can't be generate it yields error */
+    This function generates the .ent file if there are entry labels by writing
+    the necessary data. If the file can't be created, an error is logged. */
 void createEntriesFile()
 {
     FILE *ent;
@@ -58,9 +58,9 @@ void createEntriesFile()
         fileCreationFailure(fileName);
 }
 
-/* createExternalsFile()
-This function generates the .ext files (as long as there are external labels)
-by writing it into the file, if the file can't be generate it yields error */
+/* void createExternalsFile()
+    This function generates the .ext file if there are external labels.
+    It writes the data to the file. If the file can't be created, an error is logged. */
 void createExternalsFile()
 {
     FILE *ext;

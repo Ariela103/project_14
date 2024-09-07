@@ -9,16 +9,16 @@ This file is used for generating the required output files of the assembler.
 ##########################################################################################################
 */
 
-/*  void exportFilesMainHandler()
+/*  void exportFiles()
 This function calls other functions that will create the .ob file,
 .ent file and .ext file if there are any entry labels, and .ext file
 if there are any external labels.*/
-void exportFilesMainHandler();
+void exportFiles();
 
-/* void generateObFile()
+/* void createObFile()
 This function generates the .ob files by writing the memory image,
 if the file can't be generate it yields error  */
-void generateObFile();
+void createObFile();
 
 /* void createEntriesFile()
 This function generates the .ent files (as long as there are entry labels) by writing

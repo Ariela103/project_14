@@ -95,7 +95,7 @@ typedef enum
     parsingMacros,
     firstRun,
     secondRun,
-    exportFiles,
+    createOutputFiles,
     exitProgram
 } State;
 

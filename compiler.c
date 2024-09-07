@@ -1,67 +1,74 @@
 #include "data.h"
+void resetMemoryCounters();
+void initTables();
+void exportFiles();
+void closeOpenLogFiles();
+void allocMemoryImg();
+void calcFinalAddrsCountersValues();
+void freeHashTable(ItemType type);
 
 int main(int argc, char *argv[])
 {
     /*
-    we are passing the command line arguments that are the files that passed to the assembler
-    to the handleSourceFiles function.
+     * Passes the command-line arguments (the source files provided) to the
+     * handleSourceFiles function for further processing.
      */
     handleSourceFiles(argc, argv);
     return 0;
 }
+
 int handleSourceFiles(int argc, char *argv[])
 {
     int filesCount = argc - 1;
     int i = 1;
+
     if (filesCount < 1)
     {
-        fprintf(stderr, "\n\nYou did not passed any source files to the assembler!\n\n");
+        fprintf(stderr, "\n\nNo source files were provided for the assembler!\n\n");
         exit(1);
     }
+
+    /* Iterates over each file provided as a command-line argument */
     while (--argc)
     {
         handleSingleFile(argv[i]);
         i++;
     }
+
     return 0;
 }
+
 void handleSingleFile(char *arg)
 {
     FILE *src = NULL, *target = NULL;
     void (*setPath)(char *) = &setFileNamePath;
     State (*globalState)() = &getGlobalState;
     void (*setState)(State) = &setGlobalState;
-
     char *fileName = (char *)calloc(strlen(arg) + 4, sizeof(char *));
-    extern void resetMemoryCounters();
-    extern void initTables();
-    extern void exportFilesMainHandler();
-    extern void closeOpenLogFiles();
-    extern void allocMemoryImg();
-    extern void calcFinalAddrsCountersValues();
-    extern void freeHashTable(ItemType type);
 
-    strncpy(fileName, arg, strlen(arg)); /* sets the fileName to be arg */
-    strcat(fileName, ".as");             /* turns the files into .as files */
+    strncpy(fileName, arg, strlen(arg)); /* Assigns the base file name */
+    strcat(fileName, ".as");             /* Converts it to a .as file */
     (*setPath)(fileName);
-    /* if the file couldn't be opened it alerts it to the user */
+
+    /* If the source file can't be opened, alert the user */
     if ((src = fopen(fileName, "r")) == NULL)
     {
         fprintf(stderr, "\n######################################################################\n");
-        fprintf(stderr, " FAILURE! source code file %s could not be opened\n", fileName);
+        fprintf(stderr, " ERROR: Could not open source file %s\n", fileName);
         fprintf(stderr, "######################################################################\n\n");
         free(fileName);
         return;
     }
 
-    fileName[strlen(fileName) - 1] = 'm'; /* change the files to be .am files */
+    /* Modify the file extension from .as to .am */
+    fileName[strlen(fileName) - 1] = 'm';
     (*setPath)(fileName);
-    /* if the expanded soure file couldn't be created it alerts it to the user */
+
+    /* If the expanded source file cannot be created, notify the user */
     if ((target = fopen(fileName, "w+")) == NULL)
     {
-
         fprintf(stderr, "\n######################################################################\n");
-        fprintf(stderr, " FAILURE! expanded source code file %s could not be created\n", fileName);
+        fprintf(stderr, " ERROR: Failed to create expanded source file %s\n", fileName);
         fprintf(stderr, "######################################################################\n\n");
         fclose(src);
         free(fileName);
@@ -70,53 +77,53 @@ void handleSingleFile(char *arg)
 
     else
     {
+        /* Initialize tables for processing */
         initTables();
 
-        /* if there are no errors it starts the pre proccesing- parse all the macros,
-         saves them in the macro table and prints it */
+        /* Begin preprocessing (macro parsing), store them in the macro table and print the results */
         (*setState)(parsingMacros);
         resetMemoryCounters();
         parseSourceFile(src, target);
         printMacroTable();
         freeHashTable(Macro);
 
-        /* moves on to the first run, looks for errors in the code, counts how much space in the
-         memory the program needs and starts to parse the assembly code.
-         */
+        /* Proceed to the first run: checks for errors, calculates memory requirements,
+           and parses assembly code */
         if ((*globalState)() == firstRun)
         {
-
             rewind(target);
             parseAssemblyCode(target);
-            /* if the first run ended with no errors, it moves on to the second run,
-            builds the memory image, prints the symbols table */
+
+            /* If no errors were found in the first run, move to the second run */
             if ((*globalState)() == secondRun)
             {
+                /* Calculate final address values, build memory image, and parse code again */
                 calcFinalAddrsCountersValues();
                 updateFinalSymbolTableValues();
                 allocMemoryImg();
                 printSymbolTable();
                 rewind(target);
                 parseAssemblyCode(target);
-                /* if the second run ended with no errors, it moves to export file
-                and creates the additional files (.ob, .ent and .ext files) */
-                if ((*globalState)() == exportFiles)
+
+                /* If the second run finishes without errors, generate output files */
+                if ((*globalState)() == createOutputFiles)
                 {
-                    fileName[strlen(fileName) - 3] = '\0';
+                    fileName[strlen(fileName) - 3] = '\0'; /* Strip the .am extension */
                     (*setPath)(fileName);
-                    exportFilesMainHandler();
+                    exportFiles();
                 }
                 else
-                    printf("\nSecond Run Finished With Errors, files will not be exported!\n");
+                    printf("\nErrors encountered in second run, output files will not be created.\n");
             }
             else
-                printf("\nFirst Run Finished With Errors, will no enter second run and files will not be exported!\n");
+                printf("\nFirst run completed with errors, skipping second run and file export.\n");
+
             freeHashTable(Symbol);
         }
         else
-            printf("\nexpanding macros for %s source file\nfailed due to some code errors\nmoving on to the next file if exist\n\n", fileName);
+            printf("\nMacro expansion failed for file: %s\nMoving on to the next file if present.\n\n", fileName);
 
-        /* frees and closes all the files that have been in use */
+        /* Clean up: free memory and close open files */
         free(fileName);
         fclose(src);
         fclose(target);
