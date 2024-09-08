@@ -1,137 +1,140 @@
-
 /*
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
---------------------------- utils.c/utils.h General Overview:
+--------------------------- utils.h General Overview: ---------------------------
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 
-Utils.c files contains most of all helpers functions that are used for verifying and checking and
-validating tokens identity, funtion here are mainly used out side of this file by other functions that deals
-with parsing the assembly code.
+The `utils` module contains utility functions for the assembler, which include validating
+and checking various elements of the assembly code such as macro definitions, register
+names, label declarations, immediate parameters, and indirect parameters. The module
+also handles the detection of assembly instructions, operations, and comments, and ensures
+proper label naming according to the assembly language rules.
 
------------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 */
 
+/* Register names array */
+extern const char *regs[REGS_SIZE];
+
+/* Function declarations */
 Bool isMacroOpening(char *s);
 /* @ Function: isMacroOpening
-   @ Arguments: The function gets a char *s, the string it checks whether it is the opening of a macro or not.
-   @ Description: The function checks if char *s is equal to "macr", returns true if it is, and false if it isn't
+   @ Description: Checks if the given string is the opening of a macro.
+   @ Returns: True if the string is "macr", False otherwise.
 */
 
 Bool isMacroClosing(char *s);
 /* @ Function: isMacroClosing
-   @ Arguments: The function gets a char *s, the string it checks whether it is the closing of a macro or not.
-   @ Description: The function checks if char *s is equal to "endm", returns true if it is, and false if it isn't
+   @ Description: Checks if the given string is the closing of a macro.
+   @ Returns: True if the string is "endmacr", False otherwise.
 */
 
 Bool isPossiblyUseOfMacro(char *s);
 /* @ Function: isPossiblyUseOfMacro
-   @ Arguments: The function gets a char *s, the string it checks whether it can be a macro or not.
-   @ Description: The function checks if char *s can be a macro, by illuminating the other things it can be (an instruction, a label...).
-   Returns true if it could be a macro and false if it couldn't.
+   @ Description: Checks if the given string could possibly be a macro usage.
+   @ Returns: True if the string could be a macro usage, False otherwise.
 */
 
 Bool isLegalMacroName(char *s);
 /* @ Function: isLegalMacroName
-   @ Arguments: The function gets a char *s, the string it checks whether it is a legal macro name or not.
-   @ Description: The function checks if char *s is a legal macro name by verifying that it's name is not a name of an instruction or an operation.
-    Returns true if it is a legal macro name and false if it is not.
+   @ Description: Checks if the given string is a valid macro name.
+   @ Returns: True if the string is a legal macro name, False otherwise.
 */
 
 Bool isInstruction(char *s);
 /* @ Function: isInstruction
-   @ Arguments: The function gets a char *s, the string it checks whether it or a part of it is an instruction or not.
-   @ Description: The function checks if char *s or a part of it is an instruction by comparing it to the name of the instructions or checking if one of the instructions are a substring of it.
-   Returns true if it or a part of it is an instruction, and false if it isn't.
+   @ Description: Checks if the given string is an instruction (.data, .string, etc.).
+   @ Returns: True if the string is an instruction, False otherwise.
 */
 
 Bool isInstructionStrict(char *s);
 /* @ Function: isInstructionStrict
-   @ Arguments: The function gets a char *s, the string it checks whether it is an instruction or not.
-   @ Description: The function checks if char *s is an instruction by comparing it to the name of the instructions.
-   Returns true if it is an instruction, and false if it isn't.
+   @ Description: Checks if the given string is strictly an instruction (without missing spaces).
+   @ Returns: True if the string is exactly an instruction, False otherwise.
 */
 
 Bool isRegistery(char *s);
 /* @ Function: isRegistery
-   @ Arguments: The function gets a char *s, the string it checks whether it is a register or not.
-   @ Description: The function checks if char *s is a legal register by checking if the first char is 'r' and theothers are int numbers between 0-15.
-   Returns true if it is a register, and false if it isn't.
+   @ Description: Checks if the given string is a valid register name (r0-r7).
+   @ Returns: True if the string is a valid register, False otherwise.
 */
 
 Bool isValidImmediateParamter(char *s);
 /* @ Function: isValidImmediateParamter
-   @ Arguments: The function gets a char *s, the string it checks whether it is a valid immediate parameter or not.
-   @ Description: The function checks if char *s is a valid immediate parameter by verifying the first token us a -, a + or a digit and the other vhars are digits.
-   Returns true if it is a valid immediate parameter, and false if it isn't.
+   @ Description: Checks if the given string is a valid immediate parameter (e.g., #5).
+   @ Returns: True if the string is a valid immediate parameter, False otherwise.
+*/
 
+Bool isIndirectParameter(char *s);
+/* @ Function: isIndirectParameter
+   @ Description: Checks if the given string is a valid indirect parameter (e.g., *r0).
+   @ Returns: True if the string is a valid indirect parameter, False otherwise.
 */
 
 Bool isValidIndirectParameter(char *s);
+/* @ Function: isValidIndirectParameter
+   @ Description: Checks if the string is a valid indirect parameter referencing a valid register.
+   @ Returns: True if the string is a valid indirect parameter, False otherwise.
+*/
 
 Bool isComment(char *s);
 /* @ Function: isComment
-   @ Arguments: The function gets a char *s, the string it checks whether it is a comment or not.
-   @ Description: The function checks if char *s is a comment by checking if it's first char is ;.
-   Returns true if it is a comment, and false if it isn't.
+   @ Description: Checks if the given string is a comment (starts with ';').
+   @ Returns: True if the string is a comment, False otherwise.
 */
+
 Bool isOperation(char *s);
 /* @ Function: isOperation
-   @ Arguments: The function gets a char *s, the string it checks whether it is an operation or not.
-   @ Description: The function checks if char *s is an operation, by checking if it is equal to one of the names of the operations, using getOperationByName.
-   Returns true if it is an operation, and false if it isn't.
+   @ Description: Checks if the given string is a valid operation name.
+   @ Returns: True if the string is a valid operation, False otherwise.
 */
 
 Bool isLabelDeclarationStrict(char *s);
 /* @ Function: isLabelDeclarationStrict
-   @ Arguments: The function gets a char *s, the string it checks whether it is a label declaration or not.
-   @ Description: The function checks if char *s is a label declaration by checking if it's last char is :.
-     Returns true if it is a label declaration, and false if it isn't.
+   @ Description: Checks if the given string is a strict label declaration (ends with ':').
+   @ Returns: True if the string is a label declaration, False otherwise.
 */
 
 Bool isLabelDeclaration(char *s);
 /* @ Function: isLabelDeclaration
-   @ Arguments: The function gets a char *s, the string it checks whether it or a part of it is a label declaration or not.
-   @ Description: The function checks if char *s or a part of it is a label declaration by checking if it consists a :.
-   Returns true if it or a part of it is a label declaration, and false if it isn't.
+   @ Description: Checks if the given string contains a label declaration (contains ':').
+   @ Returns: True if the string is a label declaration, False otherwise.
 */
 
 int getInstructionType(char *s);
 /* @ Function: getInstructionType
-    @ Arguments: The function gets a char *s, the string it checks what instruction it is.
-    @ Description: The function checks if char *s or a part of it is an instruction  by  checking if one of the instructions are a substring of it.
-    Returns the right instruction if it is an instruction, and false(0) if it isn't
+   @ Description: Determines the instruction type based on the given string (e.g., .data).
+   @ Returns: The type of instruction or False if not an instruction.
 */
 
 int getRegisteryNumber(char *s);
 /* @ Function: getRegisteryNumber
-    @ Arguments: The function gets a char *s, the string it checks from what is the number of the register.
-    @ Description: The function checks what is the number of the register by checking the number at the end of the string
-    Returns the number of the register.
+   @ Description: Extracts the register number from the given register string (e.g., r2 -> 2).
+   @ Returns: The register number.
 */
-
-char *getInstructionName(char *s);
 
 char *getInstructionNameByType(int type);
 /* @ Function: getInstructionNameByType
-   @ Arguments: The function gets int type- the type of instruction.
-   @ Description: The function returns the type of the istruction and returns it as a string with \0 at the end.
-   If type is not an instruction it returns NULL.
+   @ Description: Returns the instruction name corresponding to the given type.
+   @ Returns: The instruction name or NULL if not found.
+*/
+
+char *getInstructionName(char *s);
+/* @ Function: getInstructionName
+   @ Description: Returns the instruction name based on the given string.
+   @ Returns: The instruction name or 0 if not found.
 */
 
 Bool verifyLabelNaming(char *s);
 /* @ Function: verifyLabelNaming
-   @ Arguments: The function gets char *s- the name of the label it about to verify.
-   @ Description: The function makes sure the name of the label is valid, by checking things like its length, if it is equal to an operation...
-   Returns true if it is a valid name of label, and false if it isn't.
+   @ Description: Verifies that the label name is valid.
+   @ Returns: True if the label name is valid, False otherwise.
 */
 
 Bool verifyLabelNamingAndPrintErrors(char *s);
 /* @ Function: verifyLabelNamingAndPrintErrors
-   @ Arguments: The function gets char *s- the name of the label it about to verify and prints it's errors.
-   @ Description: The function makes sure the name of the label is valid, by checking things like its length, if it is equal to an operation...
-   If it finds an error it yields (prints) it and returns false, else returns true.
+   @ Description: Verifies that the label name is valid and prints errors if not.
+   @ Returns: True if the label name is valid, False otherwise.
 */

@@ -44,33 +44,6 @@ char *trimFromLeft(char *s)
 }
 
 /**
- * decToOctal
- * -----
- * This function converts a decimal integer to its octal representation.
- *
- * Parameters:
- * - num: The decimal number to be converted.
- *
- * Returns:
- * - A pointer to a string containing the octal representation of the number.
- */
-char *decToOctal(int num)
-{
-    int i = num, size = 0;
-    char *octal;
-
-    /* Determine how many digits are needed for the octal representation */
-    for (size = 0; i > 0; i = i / 8)
-        size++;
-
-    /* Allocate memory for the octal string and convert the number */
-    octal = (char *)calloc(size + 1, sizeof(char));
-    sprintf(octal, "%0*o", size, num); /* Convert the number to octal */
-
-    return octal;
-}
-
-/**
  * numToBin
  * ----
  * This function converts a decimal number to its binary representation as a 15-bit string.

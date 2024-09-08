@@ -1,4 +1,4 @@
-#include "constants.h"
+
 
 /*Bit is is a special variable that we made to build with BinaryWord*/
 typedef struct

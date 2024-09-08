@@ -1,76 +1,89 @@
-
 /*
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
---------------------------- sharedStates.c/h General Overview:
+--------------------------- sharedState.h General Overview: ----------------------------
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
-the file sharedStates.h/c exist for holding and safely sharing all the global states information about our
-program at current moment which are:
 
-1.The current state of our program (parsing macros/first run/etc...),the source file name which is currently
-being handled by the assembler.
+The `sharedState` module is responsible for safely managing and sharing the global state of the assembler
+at any given time. It provides functionality to track:
 
-2.the current original source filename path.
+1. **The current state of the program**: This includes whether the program is in a particular phase, such
+   as macro parsing, the first pass, the second pass, or handling errors.
 
-3.the current line we are on while parsing macros/first run/second run/error printing.
+2. **The current source file path**: This is the name and location of the file currently being processed by
+   the assembler.
 
-The implementation for this is done by making a getters and setters functions to update static global variables
-that are defined in the file so they would be closed to its scope.
+3. **The current line number**: This keeps track of the line number within the source file, which is useful
+   for error reporting and managing the assembler's progress through the file.
 
------------------------------------------------------------------------------------------
+By using getter and setter functions, the state management is encapsulated within the module, and the rest
+of the program interacts with these global variables exclusively through these functions.
+
 -----------------------------------------------------------------------------------------
 -----------------------------------------------------------------------------------------
 */
 
+/**
+ * setGlobalState
+ * --------------
+ * Updates the global state of the program to the provided state.
+ *
+ * Parameters:
+ * - newState: The new state to set the program to.
+ */
 void setGlobalState(State newState);
-/* @ Function: setGlobalState
-   @ Aruments: The function gets State new- the state the function will update
-   @ Description: The function updates the globalState to be the state it gets. This is the one of the only times we have an access to the global state (only through using the functions setGlobalState and getGlobalState)
-    The function doesn't return any value.
-*/
 
+/**
+ * getGlobalState
+ * --------------
+ * Retrieves the current global state of the program.
+ *
+ * Returns:
+ * - State: The current global state.
+ */
 State getGlobalState();
-/* @ Function: getGlobalState
-   @ Aruments: The function doesn't get any arguments.
-   @ Description: The function gets the global state. This is the one of the only times we have an access to the global state (only through using the functions setGlobalState and getGlobalState)
-    The function returns the current global state.
-*/
 
+/**
+ * setFileNamePath
+ * ---------------
+ * Updates the file path of the source file currently being processed.
+ *
+ * Parameters:
+ * - s: The file path of the current source file as a string.
+ */
 void setFileNamePath(char *s);
-/* @ Function: setFileNamePath
-   @ Aruments: The function gets char *s which is a current file name that is handled by our assembler at the moment.
-   @ Description: This is a setter function that updates te state of the current file name path, this state is used
-   in other files of the program that needs to know what is the base file name and exact path of the current file that is being handled.
-    The function doesn't return any value.
-*/
 
+/**
+ * getFileNamePath
+ * ---------------
+ * Retrieves the current file path of the source file being processed.
+ *
+ * Returns:
+ * - char*: A cloned copy of the current file path.
+ */
 char *getFileNamePath();
-/* @ Function: getFileNamePath
-   @ Aruments: The function doesn't get any arguments.
-   @ Description: The function is a getter function for the state of the current file name path.
-   The function returns separated copy of the string (clone), in order for other parts of the program
-   that are also dealing with creating an outputing different file outputs (.ob, .ext, .ent, reportError and more)
-    for each file input the program gets fromthe user.
-*/
 
+/**
+ * resetCurrentLineNumber
+ * ----------------------
+ * Resets the current line number to 1. Typically used at the start of processing a new file.
+ */
 void resetCurrentLineNumber();
-/* @ Function: resetCurrentLineNumber
-   @ Aruments: The function doesn't get any arguments.
-   @ Description: The function resets currentLineNumber to be 1.
-    The function doesn't return any value.
-*/
 
+/**
+ * increaseCurrentLineNumber
+ * -------------------------
+ * Increments the current line number by 1 after each processed line of code.
+ */
 void increaseCurrentLineNumber();
-/* @ Function: increaseCurrentLineNumber
-   @ Aruments: The function doesn't get any arguments.
-   @ Description: The function increases currentLineNumber by 1.
-    The function doesn't return any value.
-*/
 
+/**
+ * getCurrentLineNumber
+ * --------------------
+ * Retrieves the current line number being processed in the source file.
+ *
+ * Returns:
+ * - int: The current line number.
+ */
 int getCurrentLineNumber();
-/* @ Function: getCurrentLineNumber
-   @ Aruments: The function doesn't get any arguments.
-   @ Description: The function increases currentLineNumber by 1.
-    The function doesn't return any value.
-*/

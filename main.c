@@ -47,10 +47,10 @@ int handleSourceFiles(int argc, char *argv[])
 extern void handleSingleFile(char *arg)
 {
     FILE *src = NULL, *target = NULL;
+    char *fileName = (char *)calloc(strlen(arg) + 4, sizeof(char *)); /* Allocating memory for the file name with extension */
     void (*setPath)(char *) = &setFileNamePath;
     void (*setState)(State) = &setGlobalState;
     State (*globalState)() = &getGlobalState;
-    char *fileName = (char *)calloc(strlen(arg) + 4, sizeof(char *)); /* Allocating memory for the file name with extension */
 
     /*
      * The base file name is set by copying the original file name (arg) and appending ".as"

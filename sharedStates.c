@@ -5,7 +5,7 @@
  * path: Stores the file path of the current source file being processed.
  * currentLineNumber: Tracks the current line number in the source file.
  */
-static State globalState = startProgram;
+static State state = startProgram;
 static char *path;
 static unsigned currentLineNumber = 1;
 
@@ -19,7 +19,7 @@ static unsigned currentLineNumber = 1;
  */
 void setGlobalState(State newState)
 {
-    globalState = newState; /* Update the global state */
+    state = newState; /* Update the global state */
 }
 
 /**
@@ -32,7 +32,7 @@ void setGlobalState(State newState)
  */
 State getGlobalState()
 {
-    State current = globalState;
+    State current = state;
     return current; /* Return the current global state */
 }
 

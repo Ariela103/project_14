@@ -1,13 +1,5 @@
 #include "data.h"
 
-/**
- * Function pointers to get and set the global state of the assembly process.
- * setState: Used to update the current state.
- * globalState: Used to retrieve the current state.
- */
-void (*setState)(State) = &setGlobalState;
-State (*globalState)() = &getGlobalState;
-
 /** Function declarations for macro processing **/
 extern Bool isPossiblyUseOfMacro(char *s);
 extern Bool isMacroOpening(char *s);
@@ -32,10 +24,6 @@ extern Item *getMacro(char *s);
  */
 void parseMacros(char *line, char *token, FILE *src, FILE *target)
 {
-    /**
-     * Function pointer to increment the line number after each successful parsing.
-     */
-    void (*currentLineNumberPlusPlus)() = &increaseCurrentLineNumber;
 
     /**
      * Static variables to track macro name, and whether we are currently reading a macro.
@@ -44,6 +32,8 @@ void parseMacros(char *line, char *token, FILE *src, FILE *target)
     static char macroName[MAX_LABEL_LEN] = {0}, *next;
     static Bool isReadingMacro = False;
     static long start = 0, end = 0;
+    void (*currentLineNumberPlusPlus)() = &increaseCurrentLineNumber;
+    void (*setState)(State) = &setGlobalState;
 
     /**
      * If we are not currently reading a macro and the token is not a macro opening,
@@ -153,11 +143,18 @@ void parseSourceFile(FILE *src, FILE *target)
     char lineClone[MAX_LINE_LEN] = {0}; /* A clone of the line for safe tokenization */
     char *token, c;
     int i = 0;
-
     /**
-     * Function pointer to reset the line counter before starting the parsing process.
+     * Function pointers to get and set the global state of the assembly process.
+     * setState: Used to update the current state.
+     * globalState: Used to retrieve the current state.
+     */
+    void (*setState)(State) = &setGlobalState;
+    State (*globalState)() = &getGlobalState;
+    /**
+     * Function pointer to increment the line number after each successful parsing.
      */
     void (*resetCurrentLineCounter)() = &resetCurrentLineNumber;
+
     (*resetCurrentLineCounter)(); /* Reset the line counter */
 
     /**
