@@ -295,7 +295,7 @@ int getInstructionType(char *s)
 /**
  * getRegisteryNumber
  * ------------------
- * Extracts the register number from the given register string (e.g., r2 -> 2).
+ * Extracts the register number from the given register string (e.g., r2 -> 2, *r2 -> 2).
  *
  * Parameters:
  * - s: The string to check.
