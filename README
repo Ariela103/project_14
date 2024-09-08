@@ -1,16 +1,16 @@
 #### 1) Macros Stage:
 The assembler parses the original source (`.as`) file and generates an expanded source file (`.am`). This expanded file contains the same source code, except that the macros defined in the original source file are replaced by their content. The assembler uses a hash table (Macro Table) to store the macro name and its start and end positions in the source file.
 
-**Error Handling**: If there are any errors in the macro syntax, a relevant error message is logged both to `stderr` and to an error log file created within the source file's directory. The assembler then proceeds to the next source file. 
-**Success**: If no errors are found, the assembler continues to the **First Run** stage.
+- **Error Handling**: If there are any errors in the macro syntax, a relevant error message is logged both to `stderr` and to an error log file created within the source file's directory. The assembler then proceeds to the next source file. 
+- **Success**: If no errors are found, the assembler continues to the **First Run** stage.
 
 
 #### 2) First Run:
 During the first run, the assembler performs several tasks:
  
-**Memory Calculation**: It counts the size of the data and instruction images (without allocating memory).
-**Symbol Table**: It adds all symbols to the symbol table.
-**Error Checking**: The assembler verifies that the source code contains no errors.
+- **Memory Calculation**: It counts the size of the data and instruction images (without allocating memory).
+- **Symbol Table**: It adds all symbols to the symbol table.
+- **Error Checking**: The assembler verifies that the source code contains no errors.
 
 If any errors or warnings are found, they are logged to `stderr` and a dedicated error log file within the same directory as the source file. Despite encountering errors, the assembler will continue parsing the entire file to log all possible issues. However, if any critical errors are found, the assembler will skip the next stages and move directly to the **Next** source file.
 
@@ -40,7 +40,6 @@ If the **Second Run** finishes without errors, the assembler generates the follo
 `.ent` file (Entry symbols)
 
 These output files are created in the same directory as the source file.
-
 
 
 ##### Next:
