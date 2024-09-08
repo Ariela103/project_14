@@ -1,69 +1,54 @@
+#### 1) Macros Stage:
+The assembler parses the original source (`.as`) file and generates an expanded source file (`.am`). This expanded file contains the same source code, except that the macros defined in the original source file are replaced by their content. The assembler uses a hash table (Macro Table) to store the macro name and its start and end positions in the source file.
 
-# Assembler Stages Overview
-
-This assembler processes each source file (.as) through a series of stages to generate the final output files (.ob, .ext, .ent). Each source file will have its own dedicated error and warning log file created within its directory. Below are the detailed stages of the assembler process:
-
----
-
-## 1.Macros Stage
-
-The assembler starts by parsing the original source file (`.as`) and generating an expanded source file (`.am`). The expanded file includes the same content as the original, but with macros replaced by their respective definitions. To achieve this, the assembler stores macro names and their corresponding positions in a hash table (Macro Table).
-
-- If any syntax errors are detected in the macro definitions, relevant error messages are output to a log file located in the source file's directory, and the assembler moves to the **Next** stage.
-- If no errors are found, the assembler proceeds to the **First Run** stage.
+- **Error Handling**: If there are any errors in the macro syntax, a relevant error message is logged both to `stderr` and to an error log file created within the source file's directory. The assembler then proceeds to the next source file. 
+- **Success**: If no errors are found, the assembler continues to the **First Run** stage.
 
 ---
 
-## 2.First Run
+#### 2) First Run:
+During the first run, the assembler performs several tasks:
 
-In the **First Run** stage, the assembler performs the following tasks:
-
-- **Memory Calculation**: It counts the size of the data and instruction images without allocating memory.
+- **Memory Calculation**: It counts the size of the data and instruction images (without allocating memory).
 - **Symbol Table**: It adds all symbols to the symbol table.
-- **Error Checking**: It verifies the source code for errors.
+- **Error Checking**: The assembler verifies that the source code contains no errors.
 
-If any errors or warnings are detected, they are reported to `stderr` and logged in a separate log file within the directory of the source file being processed. The assembler continues parsing the entire file even if errors occur, to capture all issues. However, if any critical errors are found, the assembler will not proceed to the second run but will skip to the **Next** stage.
-
----
-
-## 3.Between the First and Second Run
-
-If the **First Run** finishes without errors, the assembler performs the following actions:
-
-- **Symbol Address Update**: It updates the addresses of all data symbols in the symbol table.
-- **Memory Allocation**: It allocates the exact amount of memory needed for the final binary image.
-- **Counter Reset**: It resets the Instruction Counter (IC) and Data Counter (DC) before proceeding to the second run.
+If any errors or warnings are found, they are logged to `stderr` and a dedicated error log file within the same directory as the source file. Despite encountering errors, the assembler will continue parsing the entire file to log all possible issues. However, if any critical errors are found, the assembler will skip the next stages and move directly to the **Next** source file.
 
 ---
 
-## 4.Second Run
+#### 3) Between the First and Second Run:
+If the **First Run** finishes successfully (i.e., no critical errors), the assembler proceeds with the following:
 
+- **Symbol Address Update**: The assembler updates the addresses of all data symbols in the symbol table.
+- **Memory Allocation**: The assembler allocates the exact amount of memory required for the final binary image.
+- **Counter Reset**: Instruction and Data counters (IC/DC) are reset in preparation for the **Second Run**.
+
+---
+
+#### 4) Second Run:
 During the **Second Run**, the assembler:
 
-- **Binary Conversion**: Converts each line of the source code into binary and writes the corresponding words into the memory image.
-- **External Operands**: Updates the external operands table as necessary.
+- **Binary Conversion**: Writes each line of code in binary format and inserts the resulting words into the memory image in the correct position (depending on whether the word is a data or instruction word).
+- **External Operands**: Updates the external operands table with any external symbols used.
 
-If the assembler encounters a label that is neither present in the symbol table nor marked as external, it logs the error but continues parsing the rest of the file to report all such errors. Since any other errors would have been caught earlier, this is the only type of error that can occur during the second run. If any errors occur at this stage, the assembler will complete the second run but will not export any files.
+If the assembler encounters any label operand that is neither in the symbol table nor marked as external, it logs the error but continues parsing the file to log all such issues. This is the only type of error that can appear in the **Second Run**. If any errors are found at this stage, the assembler will not generate the output files but will complete the second run and move on to the **Next** file.
 
 ---
 
-## 5.Export (Generate Files)
-
-If the **Second Run** completes without any errors, the assembler generates the following output files for the source file:
+#### 5) Export (Generate Files):
+If the **Second Run** finishes without errors, the assembler generates the following output files for the source file:
 
 - `.ob` file (Object code)
 - `.ext` file (External symbols)
 - `.ent` file (Entry symbols)
 
-These files are created in the same directory as the source file.
+These output files are created in the same directory as the source file.
 
 ---
 
-## 6.Next
-
-After finishing the processing of one source file, the assembler moves on to the next file in the list, repeating the steps described above. Once all files have been processed, the assembler terminates.
+##### Next:
+After finishing with one source file, the assembler repeats all these steps for the next file. Once all source files are processed, the assembler terminates.
 
 ---
-
-This process ensures that for each source file, errors and warnings are logged in a file within the source file's directory, providing clear feedback and maintaining organization during the compilation process.
 
