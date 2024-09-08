@@ -26,7 +26,7 @@ Bool writeOperationBinary(char *operationName, char *args)
 
     if (first && second)
     {
-        /* Both operands exist */
+        /* two operants are given */
         isValid = detectOperandType(first, active, 0) && detectOperandType(second, active, 1); /* Detect operand types */
         writeFirstWord(op, active);                                                            /* Write the first word of the instruction */
         writeSecondAndThirdWords(first, second, active, op);                                   /* Write the second and third words based on operands */
@@ -62,7 +62,7 @@ Bool writeOperationBinary(char *operationName, char *args)
  */
 void writeSecondAndThirdWords(char *first, char *second, AddrMethodsOptions active[2], const Operation *op)
 {
-    /* Handle cases where both operands are registers or indirect addressing */
+    /* Handle cases where both operands are registers or indirect addressing, so only one operand word is needed */
     if ((active[0].reg && active[1].reg) || (active[0].reg && active[1].indirect) ||
         (active[0].indirect && active[1].reg) || (active[0].indirect && active[1].indirect))
     {
@@ -70,7 +70,7 @@ void writeSecondAndThirdWords(char *first, char *second, AddrMethodsOptions acti
     }
     else
     {
-        /* Process the first operand if it exists */
+        /* Process the first operand if exists */
         if (first)
         {
             if (active[0].reg || active[0].indirect)
@@ -81,7 +81,7 @@ void writeSecondAndThirdWords(char *first, char *second, AddrMethodsOptions acti
                 writeImmediateOperandWord(first);
         }
 
-        /* Process the second operand */
+        /* Process the second operand if exists */
         if (second)
         {
             if (active[1].reg || active[1].indirect)
